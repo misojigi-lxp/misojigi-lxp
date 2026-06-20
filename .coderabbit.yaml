@@ -1,0 +1,51 @@
+language: "ko-KR"
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+
+  path_filters:
+    - "!**/generated/**"
+    - "!**/*.lock"
+    - "!**/node_modules/**"
+    - "!**/build/**"
+    - "!**/.gradle/**"
+    - "!**/.next/**"
+
+  path_instructions:
+    - path: "backend/**"
+      instructions: |
+        - DDD 원칙 준수 여부 확인: Entity, VO, Repository, Service 역할 분리
+        - 도메인 간 참조는 ID만 사용하는지 확인 (직접 객체 참조 금지)
+        - 도메인: lecture, member, enrollment, learninggoal, question, review
+        - JPA Entity에 @NoArgsConstructor, @Id 등 필수 애노테이션 누락 여부 확인
+        - Spring Security 관련 코드 보안 이슈 집중 검토
+        - CSRF 설정, 권한 검증 누락 여부 확인
+        - DTO에서 민감 정보 노출 또는 권한 상승 가능성 확인
+        - enum 사용 시 일관성 확인 (LectureStatus, MemberStatus, ReviewStatus, QuestionStatus, QuestionVisibility)
+        - 예외 처리: @ControllerAdvice 활용 여부, 적절한 HTTP 상태코드 반환
+
+    - path: "frontend/**"
+      instructions: |
+        - React Hook 사용 규칙 준수 여부 확인 (의존성 배열 등)
+        - 컴포넌트 책임 분리 확인 (UI / 비즈니스 로직 혼재 지양)
+        - API 호출 시 에러 핸들링 누락 여부 확인
+        - Tailwind 클래스 과도한 인라인 사용 여부 체크
+
+    - path: "docs/**"
+      instructions: |
+        - 문서 변경 시 실제 코드와 일치하는지 확인
+
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - "dev"
+      - "main"
+
+chat:
+  auto_reply: true
