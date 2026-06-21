@@ -1,0 +1,1 @@
+package wanted.misojigi.lxpnext.lecture.controller;
