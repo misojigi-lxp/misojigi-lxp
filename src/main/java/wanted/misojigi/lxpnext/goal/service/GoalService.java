@@ -1,6 +1,7 @@
 package wanted.misojigi.lxpnext.goal.service;
 
 import java.util.List;
+import java.util.stream.IntStream;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import wanted.misojigi.lxpnext.goal.domain.DetailGoal;
@@ -42,9 +43,10 @@ public class GoalService {
                 LearningGoal.create(memberId, request.title())
         );
 
-        List<DetailGoal> detailGoals = request.detailGoals().stream()
-                .map(item -> DetailGoal.create(
-                        learningGoal.getLearningGoalId(), item.content(), item.sortOrder()))
+        List<GoalCreateRequest.DetailGoalItem> items = request.detailGoals();
+        List<DetailGoal> detailGoals = IntStream.range(0, items.size())
+                .mapToObj(i -> DetailGoal.create(
+                        learningGoal.getLearningGoalId(), items.get(i).content(), i + 1))  // 배열 순서로 sortOrder 자동 부여
                 .toList();
 
         detailGoalRepository.saveAll(detailGoals);  // 묶어서 처리

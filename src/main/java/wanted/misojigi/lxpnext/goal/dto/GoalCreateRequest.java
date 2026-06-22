@@ -8,8 +8,7 @@ public record GoalCreateRequest(
 ) {
 
     public record DetailGoalItem(
-            String content,
-            int sortOrder
+            String content
     ) {
     }
 }
