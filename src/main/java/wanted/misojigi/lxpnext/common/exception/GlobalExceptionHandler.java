@@ -15,14 +15,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // 비즈니스 예외 → ErrorCode 의 상태·메시지로 응답
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusiness(BusinessException e){
         ErrorCode errorCode = e.getErrorCode();
         return ResponseEntity.status(errorCode.getHttpStatus())
                 .body(new ErrorResponse(errorCode.getMessage()));
     }
-
-    // ===== 아래는 기존 핸들러 (다음 커밋에서 정리 예정) =====
 
     /**
      * 입력 형식 검증 실패(@Valid). 필드별 메시지를 함께 내려준다.
@@ -37,27 +36,6 @@ public class GlobalExceptionHandler {
         }
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse("입력값을 확인해 주세요.222", fieldErrors));
-    }
-
-    /** 아이디 중복 → 409 */
-    @ExceptionHandler(DuplicateLoginIdException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicate(DuplicateLoginIdException e) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ErrorResponse(e.getMessage()));
-    }
-
-    /** 로그인 인증 실패 → 401 */
-    @ExceptionHandler(LoginFailedException.class)
-    public ResponseEntity<ErrorResponse> handleLoginFailed(LoginFailedException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse(e.getMessage()));
-    }
-
-    /** 비로그인 접근 → 401 */
-    @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ErrorResponse> handleUnauthorized(UnauthorizedException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse(e.getMessage()));
     }
 
     /** 도메인 불변식 위반 등(예: Member.create 의 방어 로직) → 400 */

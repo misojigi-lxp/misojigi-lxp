@@ -7,12 +7,13 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import wanted.misojigi.lxpnext.common.exception.UnauthorizedException;
+import wanted.misojigi.lxpnext.common.exception.BusinessException;
+import wanted.misojigi.lxpnext.common.exception.ErrorCode;
 
 /**
  * {@link LoginMember} 가 붙은 파라미터에 세션의 memberId 를 주입한다.
  *
- * <p>세션이 없거나 로그인 정보가 없으면 {@link UnauthorizedException} 을 던지므로,
+ * <p>세션이 없거나 로그인 정보가 없으면 예외를 던지므로,
  * 각 도메인 컨트롤러는 "로그인 여부"를 직접 검사할 필요가 없다.
  *
  * <p>주의: 여기서는 세션에 담긴 memberId 만 반환한다. 세션 도중 탈퇴한 회원까지 막아야 하는
@@ -36,11 +37,11 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         HttpSession session = request.getSession(false);
         if (session == null) {
-            throw new UnauthorizedException();
+            throw new BusinessException(ErrorCode.MEMBER_LOGIN_REQUIRED);
         }
         Object memberId = session.getAttribute(SessionConst.LOGIN_MEMBER_ID);
         if (memberId == null) {
-            throw new UnauthorizedException();
+            throw new BusinessException(ErrorCode.MEMBER_LOGIN_REQUIRED);
         }
         return memberId;
     }
