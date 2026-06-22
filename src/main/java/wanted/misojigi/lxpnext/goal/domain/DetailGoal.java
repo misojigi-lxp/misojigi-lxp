@@ -7,17 +7,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-/**
- * 세부목표 엔티티.
- *
- * <p>핵심 불변식
- * <ul>
- *   <li>세부목표는 반드시 하나의 학습목표에 속해야 한다.</li>
- *   <li>세부목표 내용은 필수값이며 50자 이하이다.</li>
- *   <li>최소 1개 · 최대 20개 제약은 서비스 계층에서 검증한다.</li>
- *   <li>달성 처리 권한(본인 여부) 검증은 서비스 계층에서 수행한다.</li>
- * </ul>
- */
 @Entity
 @Table(name = "detail_goals")
 public class DetailGoal {
