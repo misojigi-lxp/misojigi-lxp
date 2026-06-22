@@ -43,9 +43,11 @@ public class GoalService {
         );
 
         List<DetailGoal> detailGoals = request.detailGoals().stream()
-                .map(item -> DetailGoal.create(learningGoal.getLearningGoalId(), item.content(), item.sortOrder()))
-                .map(detailGoalRepository::save)
+                .map(item -> DetailGoal.create(
+                        learningGoal.getLearningGoalId(), item.content(), item.sortOrder()))
                 .toList();
+
+        detailGoalRepository.saveAll(detailGoals);  // 묶어서 처리
 
         return GoalCreateResponse.from(learningGoal, detailGoals);
     }
