@@ -1,0 +1,69 @@
+package wanted.misojigi.lxpnext.member.controller;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import wanted.misojigi.lxpnext.common.auth.SessionConst;
+import wanted.misojigi.lxpnext.member.domain.Member;
+import wanted.misojigi.lxpnext.member.dto.LoginRequest;
+import wanted.misojigi.lxpnext.member.dto.MemberResponse;
+import wanted.misojigi.lxpnext.member.service.MemberService;
+
+/**
+ * 인증 API.
+ *
+ * <ul>
+ *   <li>POST /auth/login  로그인</li>
+ *   <li>POST /auth/logout 로그아웃</li>
+ * </ul>
+ */
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
+
+    private static final String SESSION_COOKIE_NAME = "JSESSIONID";
+
+    private final MemberService memberService;
+
+    public AuthController(MemberService memberService) {
+        this.memberService = memberService;
+    }
+
+    /**
+     * 로그인. 성공 시 세션 생성 후 회원 정보를 반환한다.
+     */
+    @PostMapping("/login")
+    public ResponseEntity<MemberResponse> login(@Valid @RequestBody LoginRequest request,
+                                                HttpServletRequest httpRequest) {
+        Member member = memberService.authenticate(request);
+        HttpSession session = httpRequest.getSession(true);
+        session.setAttribute(SessionConst.LOGIN_MEMBER_ID, member.getMemberId());
+        return ResponseEntity.ok(MemberResponse.from(member));
+    }
+
+    /**
+     * 로그아웃. 세션을 무효화하고 세션 쿠키를 만료시킨다.
+     * 세션이 이미 없어도 정상(200) 응답한다(멱등 처리).
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest httpRequest,
+                                       HttpServletResponse httpResponse) {
+        HttpSession session = httpRequest.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        Cookie cookie = new Cookie(SESSION_COOKIE_NAME, null);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        cookie.setHttpOnly(true);
+        httpResponse.addCookie(cookie);
+        return ResponseEntity.ok().build();
+    }
+}
