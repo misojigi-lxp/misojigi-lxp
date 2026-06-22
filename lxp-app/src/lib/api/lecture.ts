@@ -1,6 +1,7 @@
 import type { LectureListResponse } from "@/types/lecture";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
 
 export async function getLectures(): Promise<LectureListResponse[]> {
   const response = await fetch(`${API_BASE_URL}/lectures`, {
