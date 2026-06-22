@@ -1,10 +1,14 @@
 package wanted.misojigi.lxpnext.enrollment.service;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import wanted.misojigi.lxpnext.common.exception.BusinessException;
 import wanted.misojigi.lxpnext.common.exception.ErrorCode;
 import wanted.misojigi.lxpnext.enrollment.domain.Enrollment;
+import wanted.misojigi.lxpnext.enrollment.dto.EnrollmentResponse;
 import wanted.misojigi.lxpnext.enrollment.repository.EnrollmentRepository;
 import wanted.misojigi.lxpnext.lecture.domain.Lecture;
 import wanted.misojigi.lxpnext.lecture.domain.LectureStatus;
@@ -47,5 +51,30 @@ public class EnrollmentService {
         }
 
         return enrollmentRepository.save(Enrollment.create(memberId, lectureId));
+    }
+
+    /**
+     * 본인 수강 목록 조회.
+     * 강의 정보를 한 번에 batch 조회하여 N+1 방지.
+     */
+    public List<EnrollmentResponse> getMyEnrollments(Long memberId) {
+        List<Enrollment> enrollments =
+                enrollmentRepository.findAllByMemberIdOrderByEnrolledAtDesc(memberId);
+
+        if (enrollments.isEmpty()) {
+            return List.of();
+        }
+
+        List<Long> lectureIds = enrollments.stream()
+                .map(Enrollment::getLectureId)
+                .toList();
+
+        Map<Long, Lecture> lectureMap = lectureRepository.findAllById(lectureIds)
+                .stream()
+                .collect(Collectors.toMap(Lecture::getId, l -> l));
+
+        return enrollments.stream()
+                .map(e -> EnrollmentResponse.of(e, lectureMap.get(e.getLectureId())))
+                .toList();
     }
 }
