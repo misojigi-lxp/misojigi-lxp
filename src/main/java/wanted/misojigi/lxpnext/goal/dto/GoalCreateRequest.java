@@ -1,4 +1,15 @@
 package wanted.misojigi.lxpnext.goal.dto;
 
-public class GoalCreateRequest {
+import java.util.List;
+
+public record GoalCreateRequest(
+        String title,
+        List<DetailGoalItem> detailGoals
+) {
+
+    public record DetailGoalItem(
+            String content,
+            int sortOrder
+    ) {
+    }
 }
