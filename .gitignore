@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Spring Boot - 로컬 설정 ###
+application.yml
