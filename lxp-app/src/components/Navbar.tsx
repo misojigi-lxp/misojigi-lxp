@@ -4,7 +4,7 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 h-14 bg-white border-b border-gray-100 flex items-center px-8">
       {/* Logo */}
-      <Link href="/courses" className="flex items-center gap-2 mr-8">
+      <Link href="/lectures" className="flex items-center gap-2 mr-8">
         <span className="w-8 h-8 bg-violet-600 rounded-lg flex items-center justify-center text-white font-bold text-sm select-none">
           L
         </span>
@@ -14,7 +14,7 @@ export default function Navbar() {
       {/* Center nav links */}
       <div className="flex items-center gap-6 flex-1">
         <Link
-          href="/courses"
+          href="/lectures"
           className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
         >
           강의 둘러보기

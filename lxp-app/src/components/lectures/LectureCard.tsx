@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-type CourseCardProps = {
+type LectureCardProps = {
   id: number;
   title: string;
   instructor: string;
@@ -13,7 +13,7 @@ type CourseCardProps = {
   watermark: string;
 };
 
-export default function CourseCard({
+export default function LectureCard({
   id,
   title,
   instructor,
@@ -24,7 +24,7 @@ export default function CourseCard({
   category,
   enrolled,
   watermark,
-}: CourseCardProps) {
+}: LectureCardProps) {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
       {/* Thumbnail */}
@@ -61,14 +61,14 @@ export default function CourseCard({
         <div className="mt-auto pt-2">
           {enrolled ? (
             <Link
-              href={`/courses/${id}`}
+              href={`/lectures/${id}`}
               className="block w-full py-2.5 rounded-xl bg-violet-100 text-violet-700 text-sm font-medium hover:bg-violet-200 transition-colors text-center"
             >
               ✓ 수강 중 · 이어보기
             </Link>
           ) : (
             <Link
-              href={`/courses/${id}`}
+              href={`/lectures/${id}`}
               className="block w-full py-2.5 rounded-xl border border-violet-600 text-violet-600 text-sm font-medium bg-white hover:bg-violet-50 transition-colors text-center"
             >
               자세히 보기 &gt;
