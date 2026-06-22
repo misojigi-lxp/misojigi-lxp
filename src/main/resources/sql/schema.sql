@@ -89,7 +89,6 @@ CREATE TABLE learning_goals (
                                 learning_goal_id BIGINT      NOT NULL AUTO_INCREMENT,
                                 member_id        BIGINT      NOT NULL,
                                 title            VARCHAR(30) NOT NULL,
-                                due_at           DATETIME    NOT NULL,
                                 created_at       DATETIME    NOT NULL,
                                 updated_at       DATETIME    NULL,
 
