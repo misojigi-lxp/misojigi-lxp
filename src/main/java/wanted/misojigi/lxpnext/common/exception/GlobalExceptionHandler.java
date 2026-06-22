@@ -15,6 +15,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusiness(BusinessException e){
+        ErrorCode errorCode = e.getErrorCode();
+        return ResponseEntity.status(errorCode.getHttpStatus())
+                .body(new ErrorResponse(errorCode.getMessage()));
+    }
+
+    // ===== 아래는 기존 핸들러 (다음 커밋에서 정리 예정) =====
+
     /**
      * 입력 형식 검증 실패(@Valid). 필드별 메시지를 함께 내려준다.
      * 예: 회원가입 시 아이디 길이 미달, 비밀번호 누락 등.
@@ -27,7 +36,7 @@ public class GlobalExceptionHandler {
             fieldErrors.putIfAbsent(error.getField(), error.getDefaultMessage());
         }
         return ResponseEntity.badRequest()
-                .body(new ErrorResponse("입력값을 확인해 주세요.", fieldErrors));
+                .body(new ErrorResponse("입력값을 확인해 주세요.222", fieldErrors));
     }
 
     /** 아이디 중복 → 409 */
