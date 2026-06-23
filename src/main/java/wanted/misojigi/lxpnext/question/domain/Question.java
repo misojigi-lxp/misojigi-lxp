@@ -11,6 +11,8 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import wanted.misojigi.lxpnext.common.domain.BaseEntity;
+import wanted.misojigi.lxpnext.common.exception.BusinessException;
+import wanted.misojigi.lxpnext.common.exception.ErrorCode;
 
 @Entity
 @Table(name = "questions")
@@ -62,7 +64,21 @@ public class Question extends BaseEntity {
 
     public static Question create(Long lectureId, Long writerId, String title, String content,
             QuestionVisibility visibility){
+        validateTitle(title);
+        validateContent(content);
         return new Question(lectureId, writerId, title, content, visibility);
+    }
+
+    private static void validateTitle(String title) {
+        if (title == null || title.isBlank()) {
+            throw new BusinessException(ErrorCode.COMMON_INVALID_INPUT);
+        }
+    }
+
+    private static void validateContent(String content) {
+        if (content == null || content.isBlank()) {
+            throw new BusinessException(ErrorCode.COMMON_INVALID_INPUT);
+        }
     }
 
     public boolean isDeleted() {

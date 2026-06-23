@@ -9,11 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 import wanted.misojigi.lxpnext.common.exception.BusinessException;
 import wanted.misojigi.lxpnext.common.exception.ErrorCode;
 import wanted.misojigi.lxpnext.lecture.domain.Lecture;
+import wanted.misojigi.lxpnext.lecture.domain.LectureStatus;
 import wanted.misojigi.lxpnext.lecture.repository.LectureRepository;
 import wanted.misojigi.lxpnext.member.domain.Member;
+import wanted.misojigi.lxpnext.member.domain.MemberStatus;
 import wanted.misojigi.lxpnext.member.repository.MemberRepository;
 import wanted.misojigi.lxpnext.question.domain.Question;
 import wanted.misojigi.lxpnext.question.domain.QuestionStatus;
+import wanted.misojigi.lxpnext.question.dto.QuestionCreateRequest;
 import wanted.misojigi.lxpnext.question.dto.QuestionDetailResponse;
 import wanted.misojigi.lxpnext.question.dto.QuestionListResponse;
 import wanted.misojigi.lxpnext.question.repository.QuestionRepository;
@@ -110,4 +113,19 @@ public class QuestionService {
         return QuestionDetailResponse.from(question, writerNickname);
     }
 
+    @Transactional
+    public Long createQuestion(Long memberId, QuestionCreateRequest request){
+        memberRepository.findByMemberIdAndStatus(memberId, MemberStatus.ACTIVE)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+
+        Lecture lecture = lectureRepository.findById(request.lectureId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.LECTURE_NOT_FOUND));
+        if (lecture.getStatus() != LectureStatus.PUBLIC) {
+            throw new BusinessException(ErrorCode.LECTURE_NOT_ACCESSIBLE);
+        }
+
+        Question question = Question.create(request.lectureId(), memberId, request.title(), request.content(), request.toVisibility());
+
+        return questionRepository.save(question).getQuestionId();
+    }
 }

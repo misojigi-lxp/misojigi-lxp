@@ -4,12 +4,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import wanted.misojigi.lxpnext.common.auth.LoginMember;
 import wanted.misojigi.lxpnext.common.auth.SessionConst;
+import wanted.misojigi.lxpnext.question.dto.QuestionCreateRequest;
 import wanted.misojigi.lxpnext.question.dto.QuestionDetailResponse;
 import wanted.misojigi.lxpnext.question.dto.QuestionListResponse;
 import wanted.misojigi.lxpnext.question.service.QuestionService;
@@ -48,5 +53,12 @@ public class QuestionController {
             return null;
         }
         return (Long) session.getAttribute(SessionConst.LOGIN_MEMBER_ID);
+    }
+
+    @PostMapping
+    public ResponseEntity<Long> createQuestion(@LoginMember Long memberId, @RequestBody
+            QuestionCreateRequest request) {
+        Long questionId = questionService.createQuestion(memberId, request);
+        return ResponseEntity.ok(questionId);
     }
 }
