@@ -16,7 +16,7 @@ export function useAuth() {
     try {
       const member = await loginApi(body);
       setMember(member);
-      router.push("/courses");
+      router.push("/lectures");
     } catch {
       setError("로그인 정보가 일치하지 않습니다.");
     } finally {
@@ -33,7 +33,7 @@ export function useAuth() {
     } finally {
       setMember(null);
       setIsPending(false);
-      router.push("/courses");
+      router.push("/lectures");
     }
   }
 
