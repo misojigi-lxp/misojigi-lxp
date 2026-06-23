@@ -66,10 +66,6 @@ public class GoalService {
         return GoalCreateResponse.from(learningGoal, detailGoals);
     }
 
-    /**
-     * 로그인한 회원의 '오늘의 목표'(생성 후 24시간 이내) 목록을 세부목표와 함께 조회한다.
-     * 만료되었거나 목표가 없으면 빈 리스트를 반환한다.
-     */
     public List<GoalResponse> findTodayGoals(Long memberId) {
         validateMember(memberId);
 
@@ -93,14 +89,6 @@ public class GoalService {
                 .toList();
     }
 
-    /**
-     * 학습목표를 수정한다. 제목을 갱신하고, 세부목표는 요청된 최종 상태로 맞춘다.
-     * <ul>
-     *   <li>detailGoalId가 있으면 기존 세부목표 수정 (completed 유지)</li>
-     *   <li>detailGoalId가 null이면 신규 추가</li>
-     *   <li>요청에 빠진 기존 세부목표는 삭제</li>
-     * </ul>
-     */
     @Transactional
     public GoalResponse updateGoal(Long memberId, Long goalId, GoalUpdateRequest request) {
         validateMember(memberId);
@@ -118,10 +106,6 @@ public class GoalService {
         return GoalResponse.of(goal, result);
     }
 
-    /**
-     * 세부목표의 달성 여부를 변경한다(체크/해제). 작성자 본인만 변경할 수 있다.
-     * 응답의 completed 필드로 "목표 전체 달성 여부"(세부목표 전부 완료)를 함께 내려준다.
-     */
     @Transactional
     public GoalResponse updateDetailGoalCompletion(
             Long memberId, Long goalId, Long detailGoalId, boolean completed) {
@@ -144,10 +128,6 @@ public class GoalService {
         return GoalResponse.of(goal, details);
     }
 
-    /**
-     * 학습목표를 삭제한다(soft delete). 하위 세부목표도 함께 삭제된다.
-     * 작성자 본인만 삭제할 수 있으며, 달성 여부와 무관하게 언제든 삭제 가능하다.
-     */
     @Transactional
     public void deleteGoal(Long memberId, Long goalId) {
         validateMember(memberId);
