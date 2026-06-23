@@ -37,7 +37,7 @@ public class QuestionService {
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.LECTURE_NOT_FOUND));
 
-        boolean isInstructor = lecture.getInstructorId().equals(memberId);
+        boolean isInstructor = isInstructorOf(lecture, memberId);
 
         List<Question> questions =
                 questionRepository.findByLectureIdAndStatus(lectureId, QuestionStatus.ACTIVE);
@@ -54,9 +54,19 @@ public class QuestionService {
                 .toList();
     }
 
+    private boolean isInstructorOf(Lecture lecture, Long memberId) {
+        if (memberId == null) {
+            return false;
+        }
+        return lecture.getInstructorId().equals(memberId);
+    }
+
     private boolean isVisibleTo(Question question, Long memberId, boolean isInstructor) {
         if (!question.isPrivate()) {
             return true;
+        }
+        if (memberId == null) {
+            return false;
         }
         return question.isWrittenBy(memberId) || isInstructor;
     }
@@ -72,19 +82,22 @@ public class QuestionService {
     }
 
     @Transactional(readOnly = true)
-    public QuestionDetailResponse getQuestion(Long questionId, Long memberId){
+    public QuestionDetailResponse getQuestion(Long questionId, Long memberId) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.QUESTION_NOT_FOUND));
 
-        if (question.isDeleted()){
+        if (question.isDeleted()) {
             throw new BusinessException(ErrorCode.QUESTION_DELETED);
         }
 
-        if (question.isPrivate()){
+        if (question.isPrivate()) {
+            if (memberId == null) {
+                throw new BusinessException(ErrorCode.QUESTION_ACCESS_DENIED);
+            }
             Lecture lecture = lectureRepository.findById(question.getLectureId())
                     .orElseThrow(() -> new BusinessException(ErrorCode.LECTURE_NOT_FOUND));
 
-            boolean canAccess = question.isWrittenBy(memberId) || lecture.getInstructorId().equals(memberId);
+            boolean canAccess = question.isWrittenBy(memberId) || isInstructorOf(lecture, memberId);
             if (!canAccess) {
                 throw new BusinessException(ErrorCode.QUESTION_ACCESS_DENIED);
             }
