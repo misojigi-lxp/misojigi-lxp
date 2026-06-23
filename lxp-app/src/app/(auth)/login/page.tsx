@@ -1,13 +1,46 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import { login } from "@/lib/api/auth";
+import useAuthStore from "@/store/authStore";
+import type { ErrorResponse } from "@/types/auth";
+import axios from "axios";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const setUser = useAuthStore((state) => state.setUser);
+
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const isDisabled = !id.trim() || !password.trim() || isLoading;
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const user = await login({ loginId: id, password });
+      setUser(user);
+      router.push("/courses");
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const data = err.response?.data as ErrorResponse | undefined;
+        setError(data?.message ?? "로그인 중 오류가 발생했습니다.");
+      } else {
+        setError("로그인 중 오류가 발생했습니다.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <div className="flex-1 flex items-center justify-center px-4 py-12">
@@ -19,7 +52,7 @@ export default function LoginPage() {
         </div>
 
         {/* Form */}
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <Input
             label="아이디"
             id="user-id"
@@ -37,8 +70,12 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <Button type="submit" fullWidth className="mt-2 py-3">
-            로그인
+          {error && (
+            <p className="text-sm text-red-500">{error}</p>
+          )}
+
+          <Button type="submit" fullWidth disabled={isDisabled} className="mt-2 py-3">
+            {isLoading ? "로그인 중..." : "로그인"}
           </Button>
         </form>
 

@@ -5,6 +5,7 @@ type ButtonProps = {
   variant?: "primary" | "outline";
   type?: "button" | "submit" | "reset";
   fullWidth?: boolean;
+  disabled?: boolean;
   className?: string;
   onClick?: () => void;
 };
@@ -14,21 +15,23 @@ export default function Button({
   variant = "primary",
   type = "button",
   fullWidth = false,
+  disabled = false,
   className = "",
   onClick,
 }: ButtonProps) {
   const base =
-    "inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-sm transition-colors cursor-pointer focus:outline-none";
+    "inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-sm transition-colors focus:outline-none";
   const variants = {
-    primary: "bg-violet-600 text-white hover:bg-violet-700",
+    primary: "bg-violet-600 text-white hover:bg-violet-700 disabled:bg-violet-300 disabled:cursor-not-allowed",
     outline:
-      "border border-violet-600 text-violet-600 bg-white hover:bg-violet-50",
+      "border border-violet-600 text-violet-600 bg-white hover:bg-violet-50 disabled:opacity-50 disabled:cursor-not-allowed",
   };
 
   return (
     <button
       type={type}
       onClick={onClick}
+      disabled={disabled}
       className={`${base} ${variants[variant]} ${fullWidth ? "w-full" : ""} ${className}`}
     >
       {children}
