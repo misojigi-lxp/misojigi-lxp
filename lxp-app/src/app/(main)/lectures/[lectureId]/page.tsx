@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getLecture } from "@/lib/api/lecture";
 import type { LectureDetailResponse } from "@/types/lecture";
 import LectureContentItem from "@/components/lectures/LectureContentItem";
+import LectureTabMenu from "@/components/lectures/LectureTabMenu";
 
 type LectureDetailPageProps = {
   params: Promise<{
@@ -67,6 +68,8 @@ export default async function LectureDetailPage({
               {lecture.description ?? "강의 설명이 없습니다."}
             </p>
           </section>
+
+          <LectureTabMenu />
 
           <section className="mt-8 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
             <div className="mb-5 flex items-center justify-between">
