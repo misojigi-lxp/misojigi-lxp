@@ -2,6 +2,7 @@ package wanted.misojigi.lxpnext.goal.controller;
 
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,5 +49,14 @@ public class GoalController {
             @RequestBody GoalUpdateRequest request
     ) {
         return ResponseEntity.ok(goalService.updateGoal(memberId, goalId, request));
+    }
+
+    @DeleteMapping("/{goalId}")
+    public ResponseEntity<Void> deleteGoal(
+            @LoginMember Long memberId,
+            @PathVariable Long goalId
+    ) {
+        goalService.deleteGoal(memberId, goalId);
+        return ResponseEntity.noContent().build();
     }
 }

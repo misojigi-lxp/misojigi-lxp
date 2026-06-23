@@ -118,6 +118,25 @@ public class GoalService {
         return GoalResponse.of(goal, result);
     }
 
+    /**
+     * 학습목표를 삭제한다(soft delete). 하위 세부목표도 함께 삭제된다.
+     * 작성자 본인만 삭제할 수 있으며, 달성 여부와 무관하게 언제든 삭제 가능하다.
+     */
+    @Transactional
+    public void deleteGoal(Long memberId, Long goalId) {
+        validateMember(memberId);
+
+        LearningGoal goal = learningGoalRepository.findById(goalId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.GOAL_NOT_FOUND));
+        if (!goal.isOwnedBy(memberId)) {
+            throw new BusinessException(ErrorCode.GOAL_ACCESS_DENIED);
+        }
+
+        List<DetailGoal> details = detailGoalRepository.findByLearningGoalIdOrderBySortOrderAsc(goalId);
+        detailGoalRepository.deleteAll(details);  // @SQLDelete → 세부목표도 soft delete
+        learningGoalRepository.delete(goal);       // @SQLDelete → 학습목표 soft delete
+    }
+
     /** 세부목표를 요청된 최종 상태(추가/수정/삭제)로 동기화하고, 노출 순서대로 정렬된 결과를 반환한다. */
     private List<DetailGoal> applyDetailGoalChanges(
             Long goalId, List<GoalUpdateRequest.DetailGoalItem> items) {

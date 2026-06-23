@@ -7,11 +7,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import wanted.misojigi.lxpnext.common.domain.BaseEntity;
 
 
 @Entity
 @Table(name = "learning_goals")
+@SQLDelete(sql = "UPDATE learning_goals SET deleted_at = NOW() WHERE learning_goal_id = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class LearningGoal extends BaseEntity {
 
     @Id
@@ -27,6 +31,10 @@ public class LearningGoal extends BaseEntity {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    /** 삭제일(soft delete). 살아있는 목표는 null. */
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     protected LearningGoal() {
     }
@@ -87,5 +95,9 @@ public class LearningGoal extends BaseEntity {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
     }
 }

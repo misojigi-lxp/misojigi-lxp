@@ -6,9 +6,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "detail_goals")
+@SQLDelete(sql = "UPDATE detail_goals SET deleted_at = NOW() WHERE detail_goal_id = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class DetailGoal {
 
     @Id
@@ -27,6 +32,10 @@ public class DetailGoal {
 
     @Column(name = "sort_order", nullable = false)
     private int sortOrder;
+
+    /** 삭제일(soft delete). 살아있는 세부목표는 null. */
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     protected DetailGoal() {
     }
@@ -96,5 +105,9 @@ public class DetailGoal {
 
     public int getSortOrder() {
         return sortOrder;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
     }
 }
