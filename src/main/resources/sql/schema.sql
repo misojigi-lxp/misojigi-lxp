@@ -6,8 +6,6 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 -- ------------------------------------------------------------
 -- 기존 테이블 삭제 (재실행 대비)
---   FK_CHECKS 를 꺼둔 상태이므로 순서 무관하지만,
---   가독성을 위해 자식 → 부모 순서로 정렬
 -- ------------------------------------------------------------
 DROP TABLE IF EXISTS review_likes;
 DROP TABLE IF EXISTS reviews;
@@ -23,13 +21,13 @@ DROP TABLE IF EXISTS members;
 -- Member (회원)
 -- ------------------------------------------------------------
 CREATE TABLE members (
-                         member_id    BIGINT       NOT NULL AUTO_INCREMENT,
-                         login_id     VARCHAR(100) NOT NULL,
+                         member_id     BIGINT       NOT NULL AUTO_INCREMENT,
+                         login_id      VARCHAR(100) NOT NULL,
                          password_hash VARCHAR(255) NOT NULL,
-                         nickname     VARCHAR(100) NOT NULL,
-                         status       VARCHAR(20)  NOT NULL,
-                         created_at   DATETIME     NOT NULL,
-                         deleted_at   DATETIME     NULL,
+                         nickname      VARCHAR(100) NOT NULL,
+                         status        VARCHAR(20)  NOT NULL,
+                         created_at    DATETIME     NOT NULL,
+                         deleted_at    DATETIME     NULL,
 
                          PRIMARY KEY (member_id),
                          UNIQUE KEY uq_member_login_id (login_id),
@@ -102,16 +100,16 @@ CREATE TABLE learning_goals (
 -- DetailGoal (세부목표)
 -- ------------------------------------------------------------
 CREATE TABLE detail_goals (
-                              detail_goal_id   BIGINT      NOT NULL AUTO_INCREMENT,
-                              learning_goal_id BIGINT      NOT NULL,
-                              content          VARCHAR(50) NOT NULL,
-                              completed        BOOLEAN     NOT NULL DEFAULT FALSE,
-                              sort_order       INT         NOT NULL,
-                              deleted_at       DATETIME    NULL,
+                              detail_goal_id   BIGINT       NOT NULL AUTO_INCREMENT,
+                              learning_goal_id BIGINT       NOT NULL,
+                              content          VARCHAR(100) NOT NULL,
+                              completed        BOOLEAN      NOT NULL DEFAULT FALSE,
+                              sort_order       INT          NOT NULL,
+                              deleted_at       DATETIME     NULL,
 
                               PRIMARY KEY (detail_goal_id),
                               CONSTRAINT fk_detail_goal_learning_goal FOREIGN KEY (learning_goal_id) REFERENCES learning_goals (learning_goal_id),
-                              CONSTRAINT chk_detail_goal_content_len CHECK (CHAR_LENGTH(content) <= 50)
+                              CONSTRAINT chk_detail_goal_content_len CHECK (CHAR_LENGTH(content) <= 100)
 );
 
 -- ------------------------------------------------------------
@@ -167,8 +165,8 @@ CREATE TABLE review_likes (
 
                               PRIMARY KEY (review_like_id),
                               UNIQUE KEY uq_review_like (review_id, member_id),
-                              CONSTRAINT fk_review_like_review FOREIGN KEY (review_id)  REFERENCES reviews (review_id),
-                              CONSTRAINT fk_review_like_member FOREIGN KEY (member_id)  REFERENCES members (member_id)
+                              CONSTRAINT fk_review_like_review FOREIGN KEY (review_id) REFERENCES reviews (review_id),
+                              CONSTRAINT fk_review_like_member FOREIGN KEY (member_id) REFERENCES members (member_id)
 );
 
 SET FOREIGN_KEY_CHECKS = 1;
