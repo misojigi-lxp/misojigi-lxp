@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import useAuthStore from "@/store/authStore";
 import { logout } from "@/lib/api/auth";
+import WithdrawModal from "@/components/auth/WithdrawModal";
 
 export default function Navbar() {
   const router = useRouter();
@@ -35,10 +36,8 @@ export default function Navbar() {
     }
   }
 
-  // showWithdraw는 커밋 6에서 WithdrawModal과 연결
-  void showWithdraw;
-
   return (
+    <>
     <nav className="fixed top-0 left-0 right-0 z-50 h-14 bg-white border-b border-gray-100 flex items-center px-8">
       {/* Logo */}
       <Link href="/lectures" className="flex items-center gap-2 mr-8">
@@ -109,5 +108,10 @@ export default function Navbar() {
         </Link>
       )}
     </nav>
+
+      {showWithdraw && (
+        <WithdrawModal onClose={() => setShowWithdraw(false)} />
+      )}
+    </>
   );
 }
