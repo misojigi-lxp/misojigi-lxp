@@ -47,8 +47,9 @@ public class ReviewController {
 
 	@GetMapping("/lectures/{lectureId}/reviews")
 	public ResponseEntity<List<ReviewListResponse>> findReviews(
-		@PathVariable Long lectureId
+		@PathVariable Long lectureId,
+		@SessionAttribute(name = SessionConst.LOGIN_MEMBER_ID, required = false) Long loginMemberId
 	) {
-		return ResponseEntity.ok(reviewService.findReviews(lectureId));
+		return ResponseEntity.ok(reviewService.findReviews(lectureId, loginMemberId));
 	}
 }

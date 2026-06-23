@@ -10,7 +10,9 @@ public record ReviewListResponse(
 	Long writerId,
 	String content,
 	Integer rating,
-	LocalDateTime createdAt
+	LocalDateTime createdAt,
+	boolean likedByMe,
+	long likeCount
 ) {
 
 	public static ReviewListResponse from(Review review) {
@@ -20,7 +22,26 @@ public record ReviewListResponse(
 			review.getWriterId(),
 			review.getContent(),
 			review.getRating(),
-			review.getCreatedAt()
+			review.getCreatedAt(),
+			false,
+			0L
+		);
+	}
+
+	public static ReviewListResponse of(
+		Review review,
+		boolean likedByMe,
+		long likeCount
+	) {
+		return new ReviewListResponse(
+			review.getId(),
+			review.getLectureId(),
+			review.getWriterId(),
+			review.getContent(),
+			review.getRating(),
+			review.getCreatedAt(),
+			likedByMe,
+			likeCount
 		);
 	}
 }
