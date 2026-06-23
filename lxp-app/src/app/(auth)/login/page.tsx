@@ -1,13 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function LoginPage() {
-  const [id, setId] = useState("");
+  const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
+  const { login, error, isPending } = useAuth();
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    await login({ loginId, password });
+  }
 
   return (
     <div className="flex-1 flex items-center justify-center px-4 py-12">
@@ -19,14 +26,14 @@ export default function LoginPage() {
         </div>
 
         {/* Form */}
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <Input
             label="아이디"
             id="user-id"
             type="text"
             placeholder="phb123"
-            value={id}
-            onChange={(e) => setId(e.target.value)}
+            value={loginId}
+            onChange={(e) => setLoginId(e.target.value)}
           />
           <Input
             label="비밀번호"
@@ -37,8 +44,12 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <Button type="submit" fullWidth className="mt-2 py-3">
-            로그인
+          {error && (
+            <p className="text-sm text-red-500">{error}</p>
+          )}
+
+          <Button type="submit" fullWidth className="mt-2 py-3" disabled={isPending}>
+            {isPending ? "로그인 중..." : "로그인"}
           </Button>
         </form>
 
