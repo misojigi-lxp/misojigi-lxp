@@ -47,13 +47,7 @@ export default function LectureDetailTabs({ lecture }: LectureDetailTabsProps) {
 
       {activeTab === "questions" && (
         <section className="mt-8 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
-          <div className="mb-5 flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-900">Q&amp;A</h2>
-            <button className="rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-violet-700">
-              질문 등록
-            </button>
-          </div>
-
+          <h2 className="mb-5 text-xl font-bold text-gray-900">Q&amp;A</h2>
           <QnaTab lectureId={lecture.lectureId} />
         </section>
       )}

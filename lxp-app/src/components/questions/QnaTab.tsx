@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import QuestionList from "@/components/questions/QuestionList";
 import QuestionDetail from "@/components/questions/QuestionDetail";
+import QuestionFormModal from "@/components/questions/QuestionFormModal";
 import { getQuestions } from "@/lib/api/questions";
 import type { QuestionListResponse } from "@/types/question";
 
 export default function QnaTab({ lectureId }: { lectureId: number }) {
   const [questions, setQuestions] = useState<QuestionListResponse[]>([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -27,6 +29,7 @@ export default function QnaTab({ lectureId }: { lectureId: number }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lectureId]);
 
+  // 상세 보기
   if (selectedId !== null) {
     return (
       <QuestionDetail
@@ -40,12 +43,38 @@ export default function QnaTab({ lectureId }: { lectureId: number }) {
     );
   }
 
-  if (loading) {
-    return <p className="py-16 text-center text-sm text-gray-400">불러오는 중...</p>;
-  }
-  if (error) {
-    return <p className="py-16 text-center text-sm text-red-500">{error}</p>;
-  }
+  return (
+    <div>
+      {/* 헤더: 질문 등록 버튼 */}
+      <div className="mb-4 flex items-center justify-end">
+        <button
+          type="button"
+          onClick={() => setShowForm(true)}
+          className="rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-violet-700"
+        >
+          질문 등록
+        </button>
+      </div>
 
-  return <QuestionList questions={questions} onSelect={setSelectedId} />;
+      {loading ? (
+        <p className="py-16 text-center text-sm text-gray-400">불러오는 중...</p>
+      ) : error ? (
+        <p className="py-16 text-center text-sm text-red-500">{error}</p>
+      ) : (
+        <QuestionList questions={questions} onSelect={setSelectedId} />
+      )}
+
+      {/* 등록 모달 */}
+      {showForm && (
+        <QuestionFormModal
+          lectureId={lectureId}
+          onClose={() => setShowForm(false)}
+          onCreated={() => {
+            setShowForm(false);
+            loadQuestions(); // 등록 후 목록 새로고침
+          }}
+        />
+      )}
+    </div>
+  );
 }

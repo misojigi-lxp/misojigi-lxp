@@ -26,3 +26,12 @@ export function updateQuestion(
 export function deleteQuestion(questionId: number) {
   return apiRequest<void>(`/questions/${questionId}`, { method: "DELETE" });
 }
+
+export function createQuestion(body: {
+  lectureId: number;
+  title: string;
+  content: string;
+  isPublic: boolean;
+}) {
+  return apiRequest<number>("/questions", { method: "POST", body });
+}
