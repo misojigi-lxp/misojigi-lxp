@@ -23,6 +23,12 @@ export type ReviewResponse = {
   createdAt: string;
 };
 
+export type ReviewLikeResponse = {
+  reviewId: number;
+  liked: boolean;
+  likeCount: number;
+};
+
 export type ErrorResponse = {
   message: string;
   fieldErrors?: Record<string, string>;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { createReview } from "@/lib/api/reviews";
 
 type LectureReviewFormProps = {
@@ -19,7 +19,7 @@ export default function LectureReviewForm({
 
   const isDisabled = !content.trim() || isSubmitting;
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     setErrorMessage("");
@@ -51,17 +51,25 @@ export default function LectureReviewForm({
       <div className="mb-3 flex items-center justify-between gap-4">
         <h3 className="text-sm font-bold text-gray-900">후기 작성</h3>
 
-        <select
-          value={rating}
-          onChange={(e) => setRating(Number(e.target.value))}
-          className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-violet-500"
-        >
-          <option value={5}>★★★★★ 5점</option>
-          <option value={4}>★★★★☆ 4점</option>
-          <option value={3}>★★★☆☆ 3점</option>
-          <option value={2}>★★☆☆☆ 2점</option>
-          <option value={1}>★☆☆☆☆ 1점</option>
-        </select>
+        <div className="flex items-center gap-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              key={star}
+              type="button"
+              onClick={() => setRating(star)}
+              className={`text-2xl leading-none transition-colors ${
+                star <= rating ? "text-orange-400" : "text-gray-300"
+              }`}
+              aria-label={`${star}점`}
+            >
+              ★
+            </button>
+          ))}
+
+          <span className="ml-2 text-sm font-medium text-gray-600">
+            {rating}점
+          </span>
+        </div>
       </div>
 
       <textarea

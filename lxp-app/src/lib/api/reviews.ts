@@ -1,12 +1,32 @@
 import type {
   ErrorResponse,
   ReviewCreateRequest,
+  ReviewLikeResponse,
   ReviewListResponse,
   ReviewResponse,
 } from "@/types/review";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
+
+const REQUEST_TIMEOUT_MS = 8000;
+
+async function fetchWithTimeout(
+  input: string,
+  init: RequestInit
+): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  try {
+    return await fetch(input, {
+      ...init,
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
 
 async function getErrorMessage(response: Response, fallbackMessage: string) {
   try {
@@ -33,11 +53,20 @@ async function getErrorMessage(response: Response, fallbackMessage: string) {
 export async function getReviews(
   lectureId: number
 ): Promise<ReviewListResponse[]> {
-  const response = await fetch(`${API_BASE_URL}/lectures/${lectureId}/reviews`, {
-    method: "GET",
-    credentials: "include",
-    cache: "no-store",
-  });
+  let response: Response;
+
+  try {
+    response = await fetchWithTimeout(
+      `${API_BASE_URL}/lectures/${lectureId}/reviews`,
+      {
+        method: "GET",
+        credentials: "include",
+        cache: "no-store",
+      }
+    );
+  } catch {
+    throw new Error("후기 목록을 불러오지 못했습니다.");
+  }
 
   if (!response.ok) {
     const message = await getErrorMessage(
@@ -55,19 +84,57 @@ export async function createReview(
   lectureId: number,
   data: ReviewCreateRequest
 ): Promise<ReviewResponse> {
-  const response = await fetch(`${API_BASE_URL}/lectures/${lectureId}/reviews`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
+  let response: Response;
+
+  try {
+    response = await fetchWithTimeout(
+      `${API_BASE_URL}/lectures/${lectureId}/reviews`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+  } catch {
+    throw new Error("후기 등록에 실패했습니다.");
+  }
 
   if (!response.ok) {
     const message = await getErrorMessage(
       response,
       "후기 등록에 실패했습니다."
+    );
+
+    throw new Error(message);
+  }
+
+  return response.json();
+}
+
+export async function likeReview(
+  reviewId: number
+): Promise<ReviewLikeResponse> {
+  let response: Response;
+
+  try {
+    response = await fetchWithTimeout(
+      `${API_BASE_URL}/reviews/${reviewId}/likes`,
+      {
+        method: "POST",
+        credentials: "include",
+      }
+    );
+  } catch {
+    throw new Error("좋아요 등록에 실패했습니다.");
+  }
+
+  if (!response.ok) {
+    const message = await getErrorMessage(
+      response,
+      "좋아요 등록에 실패했습니다."
     );
 
     throw new Error(message);
