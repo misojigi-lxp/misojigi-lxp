@@ -88,4 +88,16 @@ public class Question extends BaseEntity {
     public String getContent() {
         return content;
     }
+
+    public QuestionVisibility getVisibility() {
+        return visibility;
+    }
+
+    public Long getWriterId() {
+        return writerId;
+    }
+
+    public Long getLectureId() {
+        return lectureId;
+    }
 }
