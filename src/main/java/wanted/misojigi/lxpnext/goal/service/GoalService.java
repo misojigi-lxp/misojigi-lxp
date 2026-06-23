@@ -94,12 +94,7 @@ public class GoalService {
         validateMember(memberId);
         validateDetailGoalCount(request.detailGoals());
 
-        LearningGoal goal = learningGoalRepository.findById(goalId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.GOAL_NOT_FOUND));
-        if (!goal.isOwnedBy(memberId)) {
-            throw new BusinessException(ErrorCode.GOAL_ACCESS_DENIED);
-        }
-
+        LearningGoal goal = findOwnedGoal(goalId, memberId);
         goal.updateTitle(request.title());
 
         List<DetailGoal> result = applyDetailGoalChanges(goalId, request.detailGoals());
@@ -110,12 +105,7 @@ public class GoalService {
     public GoalResponse updateDetailGoalCompletion(
             Long memberId, Long goalId, Long detailGoalId, boolean completed) {
         validateMember(memberId);
-
-        LearningGoal goal = learningGoalRepository.findById(goalId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.GOAL_NOT_FOUND));
-        if (!goal.isOwnedBy(memberId)) {
-            throw new BusinessException(ErrorCode.GOAL_ACCESS_DENIED);
-        }
+        LearningGoal goal = findOwnedGoal(goalId, memberId);
 
         List<DetailGoal> details = detailGoalRepository.findByLearningGoalIdOrderBySortOrderAsc(goalId);
         DetailGoal target = details.stream()
@@ -131,12 +121,7 @@ public class GoalService {
     @Transactional
     public void deleteGoal(Long memberId, Long goalId) {
         validateMember(memberId);
-
-        LearningGoal goal = learningGoalRepository.findById(goalId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.GOAL_NOT_FOUND));
-        if (!goal.isOwnedBy(memberId)) {
-            throw new BusinessException(ErrorCode.GOAL_ACCESS_DENIED);
-        }
+        LearningGoal goal = findOwnedGoal(goalId, memberId);
 
         List<DetailGoal> details = detailGoalRepository.findByLearningGoalIdOrderBySortOrderAsc(goalId);
         detailGoalRepository.deleteAll(details);  // @SQLDelete → 세부목표도 soft delete
@@ -175,6 +160,16 @@ public class GoalService {
         detailGoalRepository.saveAll(result);  // 신규는 insert, 기존은 변경감지로 update
 
         return result;
+    }
+
+    /** 목표를 조회하고 작성자 본인인지 확인한다. 없으면 GOAL_NOT_FOUND, 본인이 아니면 GOAL_ACCESS_DENIED. */
+    private LearningGoal findOwnedGoal(Long goalId, Long memberId) {
+        LearningGoal goal = learningGoalRepository.findById(goalId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.GOAL_NOT_FOUND));
+        if (!goal.isOwnedBy(memberId)) {
+            throw new BusinessException(ErrorCode.GOAL_ACCESS_DENIED);
+        }
+        return goal;
     }
 
     private void validateMember(Long memberId) {
