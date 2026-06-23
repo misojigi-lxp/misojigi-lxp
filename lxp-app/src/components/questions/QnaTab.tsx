@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import QuestionList from "@/components/questions/QuestionList";
+import QuestionDetail from "@/components/questions/QuestionDetail";
 import { getQuestions } from "@/lib/api/questions";
 import type { QuestionListResponse } from "@/types/question";
 
 export default function QnaTab({ lectureId }: { lectureId: number }) {
   const [questions, setQuestions] = useState<QuestionListResponse[]>([]);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -17,6 +19,15 @@ export default function QnaTab({ lectureId }: { lectureId: number }) {
       .finally(() => setLoading(false));
   }, [lectureId]);
 
+  if (selectedId !== null) {
+    return (
+      <QuestionDetail
+        questionId={selectedId}
+        onBack={() => setSelectedId(null)}
+      />
+    );
+  }
+
   if (loading) {
     return <p className="py-16 text-center text-sm text-gray-400">불러오는 중...</p>;
   }
@@ -24,5 +35,5 @@ export default function QnaTab({ lectureId }: { lectureId: number }) {
     return <p className="py-16 text-center text-sm text-red-500">{error}</p>;
   }
 
-  return <QuestionList questions={questions} />;
+  return <QuestionList questions={questions} onSelect={setSelectedId} />;
 }

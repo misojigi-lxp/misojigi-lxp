@@ -4,6 +4,15 @@ export interface QuestionListResponse {
   questionId: number;
   title: string;
   writerNickname: string;
-  createdAt: string; // LocalDateTime → JSON에선 문자열로 옴
+  createdAt: string;
+  visibility: QuestionVisibility;
+}
+
+export interface QuestionDetailResponse {
+  questionId: number;
+  title: string;
+  content: string;
+  writerNickname: string;
+  createdAt: string;
   visibility: QuestionVisibility;
 }
