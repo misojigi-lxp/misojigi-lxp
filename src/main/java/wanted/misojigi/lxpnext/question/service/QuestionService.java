@@ -108,7 +108,7 @@ public class QuestionService {
 
         String writerNickname = memberRepository.findById(question.getWriterId())
                 .map(Member::getNickname)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다.")); // BusinessException(ErrorCode.MEMBER_NOT_FOUND)로 변경 예정
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
 
         return QuestionDetailResponse.from(question, writerNickname);
     }
