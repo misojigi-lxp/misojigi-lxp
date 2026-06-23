@@ -26,12 +26,6 @@ export default function Navbar() {
         >
           강의 둘러보기
         </Link>
-        <Link
-          href="/enrollments"
-          className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-        >
-          내 학습
-        </Link>
       </div>
 
       {/* Right: 로그인 상태에 따라 분기 (loading 동안은 깜빡임 방지로 비워둠) */}
