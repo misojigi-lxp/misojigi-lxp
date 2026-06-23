@@ -9,13 +9,17 @@ import org.springframework.transaction.annotation.Transactional;
 import wanted.misojigi.lxpnext.common.exception.BusinessException;
 import wanted.misojigi.lxpnext.common.exception.ErrorCode;
 import wanted.misojigi.lxpnext.lecture.domain.Lecture;
+import wanted.misojigi.lxpnext.lecture.domain.LectureStatus;
 import wanted.misojigi.lxpnext.lecture.repository.LectureRepository;
 import wanted.misojigi.lxpnext.member.domain.Member;
+import wanted.misojigi.lxpnext.member.domain.MemberStatus;
 import wanted.misojigi.lxpnext.member.repository.MemberRepository;
 import wanted.misojigi.lxpnext.question.domain.Question;
 import wanted.misojigi.lxpnext.question.domain.QuestionStatus;
+import wanted.misojigi.lxpnext.question.dto.QuestionCreateRequest;
 import wanted.misojigi.lxpnext.question.dto.QuestionDetailResponse;
 import wanted.misojigi.lxpnext.question.dto.QuestionListResponse;
+import wanted.misojigi.lxpnext.question.dto.QuestionUpdateRequest;
 import wanted.misojigi.lxpnext.question.repository.QuestionRepository;
 
 @Service
@@ -105,9 +109,67 @@ public class QuestionService {
 
         String writerNickname = memberRepository.findById(question.getWriterId())
                 .map(Member::getNickname)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다.")); // BusinessException(ErrorCode.MEMBER_NOT_FOUND)로 변경 예정
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
 
         return QuestionDetailResponse.from(question, writerNickname);
     }
 
+    @Transactional
+    public Long createQuestion(Long memberId, QuestionCreateRequest request){
+        memberRepository.findByMemberIdAndStatus(memberId, MemberStatus.ACTIVE)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+
+        if (request.lectureId() == null) {
+            throw new BusinessException(ErrorCode.COMMON_INVALID_INPUT);
+        }
+
+        Lecture lecture = lectureRepository.findById(request.lectureId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.LECTURE_NOT_FOUND));
+        if (lecture.getStatus() != LectureStatus.PUBLIC) {
+            throw new BusinessException(ErrorCode.LECTURE_NOT_ACCESSIBLE);
+        }
+
+        Question question = Question.create(request.lectureId(), memberId, request.title(), request.content(), request.toVisibility());
+
+        return questionRepository.save(question).getQuestionId();
+    }
+
+    @Transactional
+    public void updateQuestion(Long memberId, Long questionId, QuestionUpdateRequest request){
+        if (request.title() == null && request.content() == null) {
+            throw new BusinessException(ErrorCode.COMMON_INVALID_INPUT);
+        }
+
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.QUESTION_NOT_FOUND));
+
+        if (question.isDeleted()) {
+            throw new BusinessException(ErrorCode.QUESTION_DELETED);
+        }
+        if (!question.isWrittenBy(memberId)) {
+            throw new BusinessException(ErrorCode.QUESTION_ACCESS_DENIED);
+        }
+
+        question.update(request.title(), request.content());
+    }
+
+    @Transactional
+    public void deleteQuestion(Long memberId, Long questionId){
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.QUESTION_NOT_FOUND));
+
+        if (question.isDeleted()) {
+            throw new BusinessException(ErrorCode.QUESTION_DELETED);
+        }
+
+        Lecture lecture = lectureRepository.findById(question.getLectureId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.LECTURE_NOT_FOUND));
+
+        boolean canDelete = question.isWrittenBy(memberId) || isInstructorOf(lecture, memberId);
+        if (!canDelete) {
+            throw new BusinessException(ErrorCode.QUESTION_ACCESS_DENIED);
+        }
+
+        question.delete();
+    }
 }
