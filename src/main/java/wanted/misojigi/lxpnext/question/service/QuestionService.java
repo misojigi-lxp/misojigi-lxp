@@ -119,6 +119,10 @@ public class QuestionService {
         memberRepository.findByMemberIdAndStatus(memberId, MemberStatus.ACTIVE)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
 
+        if (request.lectureId() == null) {
+            throw new BusinessException(ErrorCode.COMMON_INVALID_INPUT);
+        }
+
         Lecture lecture = lectureRepository.findById(request.lectureId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.LECTURE_NOT_FOUND));
         if (lecture.getStatus() != LectureStatus.PUBLIC) {
