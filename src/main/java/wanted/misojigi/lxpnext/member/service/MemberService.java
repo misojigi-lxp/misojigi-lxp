@@ -12,16 +12,7 @@ import wanted.misojigi.lxpnext.member.dto.LoginRequest;
 import wanted.misojigi.lxpnext.member.dto.SignupRequest;
 import wanted.misojigi.lxpnext.member.repository.MemberRepository;
 
-/**
- * 회원 도메인 서비스.
- *
- * <p>검증 책임 분리:
- * <ul>
- *   <li>형식 검증(길이·정규식) → DTO @Valid (컨트롤러 진입 전)</li>
- *   <li>중복 검증 → 이 서비스의 existsByLoginId</li>
- *   <li>최종 방어선 → DB UNIQUE 제약 (동시 가입 경합 대비)</li>
- * </ul>
- */
+
 @Service
 public class MemberService {
 
@@ -34,8 +25,7 @@ public class MemberService {
     }
 
     /**
-     * 회원가입. 비밀번호를 해시하여 저장하고, 저장된 회원을 반환한다.
-     * (세션 생성은 컨트롤러 책임 — 가입 직후 자동 로그인 처리)
+     * 회원가입.
      */
     @Transactional
     public Member signup(SignupRequest request) {
@@ -53,10 +43,17 @@ public class MemberService {
     }
 
     /**
+     * 회원탈퇴 (soft delete).
+     */
+    @Transactional
+    public void withdraw(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        member.withdraw();
+    }
+
+    /**
      * 로그인 인증. 성공 시 회원을 반환한다.
-     *
-     * <p>활성(ACTIVE) 회원만 조회하므로 탈퇴 회원은 자연히 차단된다.
-     * 회원 없음·비밀번호 불일치·탈퇴 회원 모두 동일한 예외로 처리한다.
      */
     @Transactional(readOnly = true)
     public Member authenticate(LoginRequest request) {
