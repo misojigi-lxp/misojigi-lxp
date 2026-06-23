@@ -1,6 +1,8 @@
 package wanted.misojigi.lxpnext.goal.controller;
 
+import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import wanted.misojigi.lxpnext.common.auth.LoginMember;
 import wanted.misojigi.lxpnext.goal.dto.GoalCreateRequest;
 import wanted.misojigi.lxpnext.goal.dto.GoalCreateResponse;
+import wanted.misojigi.lxpnext.goal.dto.GoalResponse;
 import wanted.misojigi.lxpnext.goal.service.GoalService;
 
 @RestController
@@ -26,5 +29,12 @@ public class GoalController {
             @RequestBody GoalCreateRequest request
     ) {
         return ResponseEntity.ok(goalService.createGoal(memberId, request));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<GoalResponse>> findTodayGoals(
+            @LoginMember Long memberId
+    ) {
+        return ResponseEntity.ok(goalService.findTodayGoals(memberId));
     }
 }
