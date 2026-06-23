@@ -9,6 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import wanted.misojigi.lxpnext.common.domain.BaseEntity;
+import wanted.misojigi.lxpnext.common.exception.BusinessException;
+import wanted.misojigi.lxpnext.common.exception.ErrorCode;
 
 @Entity
 @Table(name = "reviews")
@@ -63,19 +65,19 @@ public class Review extends BaseEntity {
 		return new Review(lectureId, writerId, content, rating);
 	}
 
-	private void validateContent(String content) {
+	private static void validateContent(String content) {
 		if (content == null || content.isBlank()) {
-			throw new IllegalArgumentException("후기 내용을 입력해주세요.");
+			throw new BusinessException(ErrorCode.COMMON_INVALID_INPUT);
 		}
 
 		if (content.length() >= 50) {
-			throw new IllegalArgumentException("후기 내용은 1자 이상 50자 미만이어야 합니다.");
+			throw new BusinessException(ErrorCode.COMMON_INVALID_INPUT);
 		}
 	}
 
-	private void validateRating(Integer rating) {
+	private static void validateRating(Integer rating) {
 		if (rating == null || rating < 1 || rating > 5) {
-			throw new IllegalArgumentException("별점은 1점 이상 5점 이하로 입력해주세요.");
+			throw new BusinessException(ErrorCode.COMMON_INVALID_INPUT);
 		}
 	}
 
