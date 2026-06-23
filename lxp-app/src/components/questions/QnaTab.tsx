@@ -12,11 +12,19 @@ export default function QnaTab({ lectureId }: { lectureId: number }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
+  const loadQuestions = () => {
+    setLoading(true);
     getQuestions(lectureId)
       .then(setQuestions)
-      .catch((e) => setError(e.message))
+      .catch((e) =>
+        setError(e instanceof Error ? e.message : "질문 목록을 불러오지 못했습니다."),
+      )
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadQuestions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lectureId]);
 
   if (selectedId !== null) {
@@ -24,6 +32,10 @@ export default function QnaTab({ lectureId }: { lectureId: number }) {
       <QuestionDetail
         questionId={selectedId}
         onBack={() => setSelectedId(null)}
+        onDeleted={() => {
+          setSelectedId(null);
+          loadQuestions(); // 삭제 후 목록 새로고침
+        }}
       />
     );
   }

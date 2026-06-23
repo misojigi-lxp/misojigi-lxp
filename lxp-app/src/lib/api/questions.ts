@@ -1,42 +1,28 @@
+import { apiRequest } from "@/lib/api/client";
 import type {
   QuestionListResponse,
   QuestionDetailResponse,
 } from "@/types/question";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
-
-export async function getQuestions(
-  lectureId: number
-): Promise<QuestionListResponse[]> {
-  const res = await fetch(`${BASE_URL}/questions?lectureId=${lectureId}`, {
-    credentials: "include",
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    throw new Error("질문 목록을 불러오지 못했습니다.");
-  }
-
-  return res.json();
+/** 강의별 질문 목록 조회 */
+export function getQuestions(lectureId: number) {
+  return apiRequest<QuestionListResponse[]>(`/questions?lectureId=${lectureId}`);
 }
 
-export async function getQuestion(
-  questionId: number
-): Promise<QuestionDetailResponse> {
-  const res = await fetch(`${BASE_URL}/questions/${questionId}`, {
-    credentials: "include",
-    cache: "no-store",
-  });
+/** 질문 단건 조회 */
+export function getQuestion(questionId: number) {
+  return apiRequest<QuestionDetailResponse>(`/questions/${questionId}`);
+}
 
-  if (!res.ok) {
-    if (res.status === 403) {
-      throw new Error("비공개 질문입니다. 접근 권한이 없습니다.");
-    }
-    if (res.status === 404) {
-      throw new Error("질문을 찾을 수 없거나 삭제된 질문입니다.");
-    }
-    throw new Error("질문을 불러오지 못했습니다.");
-  }
+/** 질문 수정 (작성자 본인만 — 권한은 백엔드가 검증) */
+export function updateQuestion(
+  questionId: number,
+  body: { title?: string; content?: string },
+) {
+  return apiRequest<void>(`/questions/${questionId}`, { method: "PATCH", body });
+}
 
-  return res.json();
+/** 질문 삭제 (작성자 또는 강사 — 권한은 백엔드가 검증, soft delete) */
+export function deleteQuestion(questionId: number) {
+  return apiRequest<void>(`/questions/${questionId}`, { method: "DELETE" });
 }
