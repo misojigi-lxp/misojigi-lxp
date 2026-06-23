@@ -88,7 +88,7 @@ export default async function LectureDetailPage({
             ) : (
               <div className="flex flex-col items-center justify-center rounded-xl bg-gray-50 py-12">
                 <p className="text-sm text-gray-400">
-                  {lecture.contentMessage ?? "등록된 콘텐츠가 없습니다."}
+                  등록된 콘텐츠가 없습니다.
                 </p>
               </div>
             )}

@@ -18,5 +18,4 @@ export type LectureDetailResponse = {
   title: string;
   description: string | null;
   contents: ContentResponse[];
-  contentMessage?: string | null;
 };
