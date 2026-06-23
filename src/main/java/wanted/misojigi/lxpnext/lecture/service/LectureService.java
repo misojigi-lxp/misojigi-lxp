@@ -44,7 +44,7 @@ public class LectureService {
 			throw new BusinessException(ErrorCode.LECTURE_NOT_ACCESSIBLE);
 		}
 
-		List<ContentResponse> contents = contentRepository.findByLectureIdOrderBySortOrderAsc(lectureId)
+		List<ContentResponse> contents = contentRepository.findByLectureIdOrderBySortOrderAscIdAsc(lectureId)
 			.stream()
 			.map(ContentResponse::from)
 			.toList();

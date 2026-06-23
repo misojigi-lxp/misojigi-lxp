@@ -17,7 +17,7 @@ export default async function LectureDetailPage({
   const { lectureId } = await params;
   const targetLectureId = Number(lectureId);
 
-  if (Number.isNaN(targetLectureId)) {
+  if (!Number.isSafeInteger(targetLectureId) || targetLectureId <= 0) {
     notFound();
   }
 
