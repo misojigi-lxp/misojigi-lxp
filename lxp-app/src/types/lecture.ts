@@ -1,6 +1,7 @@
 export type LectureListResponse = {
   lectureId: number;
   instructorId: number;
+  nickname: string;
   title: string;
   description: string | null;
 };

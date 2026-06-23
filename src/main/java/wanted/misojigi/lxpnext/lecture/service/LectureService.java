@@ -39,7 +39,10 @@ public class LectureService {
 	public List<LectureListResponse> findAllLectures() {
 		return lectureRepository.findByStatusOrderByCreatedAtDesc(LectureStatus.PUBLIC)
 			.stream()
-			.map(LectureListResponse::from)
+			.map(lecture -> LectureListResponse.of(
+				lecture,
+				findActiveInstructor(lecture.getInstructorId()).getNickname()
+			))
 			.toList();
 	}
 
@@ -51,9 +54,7 @@ public class LectureService {
 			throw new BusinessException(ErrorCode.LECTURE_NOT_ACCESSIBLE);
 		}
 
-		Member instructor = memberRepository
-			.findByMemberIdAndStatus(lecture.getInstructorId(), MemberStatus.ACTIVE)
-			.orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+		Member instructor = findActiveInstructor(lecture.getInstructorId());
 
 		List<ContentResponse> contents = contentRepository
 			.findByLectureIdOrderBySortOrderAscIdAsc(lectureId)
@@ -66,5 +67,11 @@ public class LectureService {
 			instructor.getNickname(),
 			contents
 		);
+	}
+
+	private Member findActiveInstructor(Long instructorId) {
+		return memberRepository
+			.findByMemberIdAndStatus(instructorId, MemberStatus.ACTIVE)
+			.orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
 	}
 }

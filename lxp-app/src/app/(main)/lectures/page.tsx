@@ -38,7 +38,11 @@ export default async function LecturesPage() {
               key={lecture.lectureId}
               id={lecture.lectureId}
               title={lecture.title}
-              instructor={`강사 ID ${lecture.instructorId}`}
+              instructor={
+                lecture.nickname
+                  ? `${lecture.nickname}`
+                  : `강사 ID ${lecture.instructorId}`
+              }
               level="중급"
               rating={0}
               students="-"

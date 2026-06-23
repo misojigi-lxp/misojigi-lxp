@@ -5,14 +5,18 @@ import wanted.misojigi.lxpnext.lecture.domain.Lecture;
 public record LectureListResponse(
 	Long lectureId,
 	Long instructorId,
+	String nickname,
 	String title,
 	String description
 ) {
-
-	public static LectureListResponse from(Lecture lecture) {
+	public static LectureListResponse of(
+		Lecture lecture,
+		String nickname
+	) {
 		return new LectureListResponse(
 			lecture.getId(),
 			lecture.getInstructorId(),
+			nickname,
 			lecture.getTitle(),
 			lecture.getDescription()
 		);
