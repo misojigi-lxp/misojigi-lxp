@@ -1,17 +1,23 @@
 package wanted.misojigi.lxpnext.review.controller;
 
+import java.util.List;
+
 import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
+
 import wanted.misojigi.lxpnext.common.auth.SessionConst;
 import wanted.misojigi.lxpnext.common.exception.BusinessException;
 import wanted.misojigi.lxpnext.common.exception.ErrorCode;
 import wanted.misojigi.lxpnext.review.dto.ReviewCreateRequest;
+import wanted.misojigi.lxpnext.review.dto.ReviewListResponse;
 import wanted.misojigi.lxpnext.review.dto.ReviewResponse;
 import wanted.misojigi.lxpnext.review.service.ReviewService;
 
@@ -37,5 +43,12 @@ public class ReviewController {
 		return ResponseEntity
 			.status(HttpStatus.CREATED)
 			.body(reviewService.createReview(lectureId, loginMemberId, request));
+	}
+
+	@GetMapping("/lectures/{lectureId}/reviews")
+	public ResponseEntity<List<ReviewListResponse>> findReviews(
+		@PathVariable Long lectureId
+	) {
+		return ResponseEntity.ok(reviewService.findReviews(lectureId));
 	}
 }
