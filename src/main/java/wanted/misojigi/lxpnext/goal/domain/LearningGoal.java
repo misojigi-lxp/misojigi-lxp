@@ -9,17 +9,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import wanted.misojigi.lxpnext.common.domain.BaseEntity;
 
-/**
- * 학습목표 Aggregate Root.
- *
- * <p>핵심 불변식
- * <ul>
- *   <li>학습목표는 특정 강의에 종속되지 않는다.</li>
- *   <li>목표 제목은 필수값이며 30자 이하이다.</li>
- *   <li>생성일 기준 24시간이 지나면 만료된다.</li>
- *   <li>작성자 본인만 조회·수정·삭제할 수 있다.</li>
- * </ul>
- */
+
 @Entity
 @Table(name = "learning_goals")
 public class LearningGoal extends BaseEntity {
