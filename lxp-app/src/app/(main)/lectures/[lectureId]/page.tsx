@@ -60,7 +60,7 @@ export default async function LectureDetailPage({
             </h1>
 
             <p className="mt-3 text-sm text-gray-500">
-              강사 ID {lecture.instructorId}
+              {lecture.nickname}
             </p>
 
             <p className="mt-6 leading-7 text-gray-700">
