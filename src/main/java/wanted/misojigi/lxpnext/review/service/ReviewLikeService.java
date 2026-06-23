@@ -1,5 +1,6 @@
 package wanted.misojigi.lxpnext.review.service;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,10 +44,17 @@ public class ReviewLikeService {
 			throw new BusinessException(ErrorCode.REVIEW_LIKE_NOT_ALLOWED);
 		}
 
-		reviewLikeRepository.findByReviewIdAndMemberId(reviewId, loginMemberId)
-			.orElseGet(() -> reviewLikeRepository.save(
-				ReviewLike.create(reviewId, loginMemberId)
-			));
+		if (reviewLikeRepository.findByReviewIdAndMemberId(reviewId, loginMemberId).isEmpty()) {
+			try {
+				reviewLikeRepository.saveAndFlush(
+					ReviewLike.create(reviewId, loginMemberId)
+				);
+			} catch (DataIntegrityViolationException ignored) {
+				// 동시에 같은 회원이 같은 후기에 좋아요를 누른 경우
+				// DB UNIQUE(review_id, member_id) 제약으로 중복 저장은 막고,
+				// 아래에서 현재 좋아요 수만 다시 계산한다.
+			}
+		}
 
 		long likeCount = reviewLikeRepository.countByReviewId(reviewId);
 
@@ -57,3 +65,6 @@ public class ReviewLikeService {
 		);
 	}
 }
+
+
+

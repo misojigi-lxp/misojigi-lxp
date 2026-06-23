@@ -13,9 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import wanted.misojigi.lxpnext.common.auth.LoginMember;
 import wanted.misojigi.lxpnext.common.auth.SessionConst;
-import wanted.misojigi.lxpnext.common.exception.BusinessException;
-import wanted.misojigi.lxpnext.common.exception.ErrorCode;
 import wanted.misojigi.lxpnext.review.dto.ReviewCreateRequest;
 import wanted.misojigi.lxpnext.review.dto.ReviewListResponse;
 import wanted.misojigi.lxpnext.review.dto.ReviewResponse;
@@ -33,13 +32,9 @@ public class ReviewController {
 	@PostMapping("/lectures/{lectureId}/reviews")
 	public ResponseEntity<ReviewResponse> createReview(
 		@PathVariable Long lectureId,
-		@SessionAttribute(name = SessionConst.LOGIN_MEMBER_ID, required = false) Long loginMemberId,
+		@LoginMember Long loginMemberId,
 		@Valid @RequestBody ReviewCreateRequest request
 	) {
-		if (loginMemberId == null) {
-			throw new BusinessException(ErrorCode.MEMBER_LOGIN_REQUIRED);
-		}
-
 		return ResponseEntity
 			.status(HttpStatus.CREATED)
 			.body(reviewService.createReview(lectureId, loginMemberId, request));
@@ -50,6 +45,13 @@ public class ReviewController {
 		@PathVariable Long lectureId,
 		@SessionAttribute(name = SessionConst.LOGIN_MEMBER_ID, required = false) Long loginMemberId
 	) {
+		// test
 		return ResponseEntity.ok(reviewService.findReviews(lectureId, loginMemberId));
 	}
 }
+
+
+
+
+
+

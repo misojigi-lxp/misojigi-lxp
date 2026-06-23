@@ -7,9 +7,13 @@ import type {
 } from "@/types/review";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
+  process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "";
 
 const REQUEST_TIMEOUT_MS = 8000;
+
+function buildApiUrl(path: string) {
+  return `${API_BASE_URL}${path}`;
+}
 
 async function fetchWithTimeout(
   input: string,
@@ -57,7 +61,7 @@ export async function getReviews(
 
   try {
     response = await fetchWithTimeout(
-      `${API_BASE_URL}/lectures/${lectureId}/reviews`,
+      buildApiUrl(`/lectures/${lectureId}/reviews`),
       {
         method: "GET",
         credentials: "include",
@@ -88,7 +92,7 @@ export async function createReview(
 
   try {
     response = await fetchWithTimeout(
-      `${API_BASE_URL}/lectures/${lectureId}/reviews`,
+      buildApiUrl(`/lectures/${lectureId}/reviews`),
       {
         method: "POST",
         credentials: "include",
@@ -121,7 +125,7 @@ export async function likeReview(
 
   try {
     response = await fetchWithTimeout(
-      `${API_BASE_URL}/reviews/${reviewId}/likes`,
+      buildApiUrl(`/reviews/${reviewId}/likes`),
       {
         method: "POST",
         credentials: "include",
