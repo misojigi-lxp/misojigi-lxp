@@ -53,6 +53,16 @@ public class MemberService {
     }
 
     /**
+     * 현재 로그인한 회원 조회 (활성 회원만). 세션 복원(GET /auth/me) 등에 사용한다.
+     * 세션은 있으나 그 사이 탈퇴한 회원이면 MEMBER_NOT_FOUND.
+     */
+    @Transactional(readOnly = true)
+    public Member findActiveMember(Long memberId) {
+        return memberRepository.findByMemberIdAndStatus(memberId, MemberStatus.ACTIVE)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    /**
      * 로그인 인증. 성공 시 회원을 반환한다.
      */
     @Transactional(readOnly = true)
