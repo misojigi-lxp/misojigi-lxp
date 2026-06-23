@@ -89,6 +89,7 @@ CREATE TABLE learning_goals (
                                 title            VARCHAR(30) NOT NULL,
                                 created_at       DATETIME    NOT NULL,
                                 updated_at       DATETIME    NULL,
+                                deleted_at       DATETIME    NULL,
 
                                 PRIMARY KEY (learning_goal_id),
                                 CONSTRAINT fk_learning_goal_member FOREIGN KEY (member_id) REFERENCES members (member_id),
@@ -104,6 +105,7 @@ CREATE TABLE detail_goals (
                               content          VARCHAR(100) NOT NULL,
                               completed        BOOLEAN      NOT NULL DEFAULT FALSE,
                               sort_order       INT          NOT NULL,
+                              deleted_at       DATETIME     NULL,
 
                               PRIMARY KEY (detail_goal_id),
                               CONSTRAINT fk_detail_goal_learning_goal FOREIGN KEY (learning_goal_id) REFERENCES learning_goals (learning_goal_id),

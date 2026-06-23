@@ -9,7 +9,7 @@
 --   member_id 4~7 : 수강생 (4번은 탈퇴 회원)
 --   password_hash 는 BCrypt 형식 예시 (평문 'password1234')
 -- ------------------------------------------------------------
-INSERT INTO members (member_id, login_id, password_hash, nickname, status, joined_at, deleted_at) VALUES
+INSERT INTO members (member_id, login_id, password_hash, nickname, status, created_at, deleted_at) VALUES
                                                                                                       (1, 'instructor_kim',  '$2a$10$abcdefghijklmnopqrstuv1234567890ABCDEFGHIJKLMNOPq', '김강사',   'ACTIVE',  '2026-01-02 09:00:00', NULL),
                                                                                                       (2, 'instructor_lee',  '$2a$10$abcdefghijklmnopqrstuv1234567890ABCDEFGHIJKLMNOPq', '이강사',   'ACTIVE',  '2026-01-03 09:00:00', NULL),
                                                                                                       (3, 'instructor_park', '$2a$10$abcdefghijklmnopqrstuv1234567890ABCDEFGHIJKLMNOPq', '박강사',   'ACTIVE',  '2026-01-04 09:00:00', NULL),

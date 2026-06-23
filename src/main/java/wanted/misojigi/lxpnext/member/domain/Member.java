@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
+import wanted.misojigi.lxpnext.common.domain.BaseEntity;
 
 /**
  * 회원 컨텍스트의 Aggregate Root.
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
  * <ul>
  *   <li>loginId 는 시스템 전체에서 UNIQUE 하며 변경할 수 없다.</li>
  *   <li>passwordHash 는 반드시 해시된 값으로 저장된다 (평문 저장 금지).</li>
- *   <li>joinedAt(가입일)은 변경할 수 없다.</li>
+ *   <li>가입일(createdAt)은 변경할 수 없다. (BaseEntity 관리)</li>
  *   <li>회원 탈퇴는 soft delete 로 처리한다 (status=DELETED, deletedAt 기록).</li>
  * </ul>
  *
@@ -30,7 +31,7 @@ import java.time.LocalDateTime;
         name = "members",
         uniqueConstraints = @UniqueConstraint(name = "uk_member_login_id", columnNames = "login_id")
 )
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,10 +53,6 @@ public class Member {
     @Column(name = "status", length = 20, nullable = false)
     private MemberStatus status;
 
-    /** 가입일. 변경 불가. */
-    @Column(name = "joined_at", nullable = false, updatable = false)
-    private LocalDateTime joinedAt;
-
     /** 탈퇴일. 활성 회원은 null. */
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
@@ -69,7 +66,6 @@ public class Member {
         this.passwordHash = passwordHash;
         this.nickname = nickname;
         this.status = MemberStatus.ACTIVE;
-        this.joinedAt = LocalDateTime.now();
     }
 
     /**
@@ -106,7 +102,7 @@ public class Member {
         return this.status == MemberStatus.ACTIVE;
     }
 
-    // loginId / joinedAt 변경 메서드는 불변식상 제공하지 않는다.
+    // loginId 변경 메서드는 불변식상 제공하지 않는다. 가입일은 BaseEntity.createdAt 으로 관리.
     // 비밀번호 변경(회원 정보 수정)은 MVP 제외이므로 setter 미제공.
 
     public Long getMemberId() {
@@ -127,10 +123,6 @@ public class Member {
 
     public MemberStatus getStatus() {
         return status;
-    }
-
-    public LocalDateTime getJoinedAt() {
-        return joinedAt;
     }
 
     public LocalDateTime getDeletedAt() {
