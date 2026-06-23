@@ -5,7 +5,7 @@ import { useAuthContext } from "@/store/authStore";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function Navbar() {
-  const { member } = useAuthContext();
+  const { member, loading } = useAuthContext();
   const { logout, isPending } = useAuth();
 
   return (
@@ -34,8 +34,10 @@ export default function Navbar() {
         </Link>
       </div>
 
-      {/* Right: 로그인 상태에 따라 분기 */}
-      {member ? (
+      {/* Right: 로그인 상태에 따라 분기 (loading 동안은 깜빡임 방지로 비워둠) */}
+      {loading ? (
+        <div className="w-24 h-8" aria-hidden />
+      ) : member ? (
         <div className="flex items-center gap-3">
           <span className="text-sm text-gray-600">{member.nickname}</span>
           <button
