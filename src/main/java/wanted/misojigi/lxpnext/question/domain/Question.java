@@ -69,6 +69,18 @@ public class Question extends BaseEntity {
         return new Question(lectureId, writerId, title, content, visibility);
     }
 
+    public void update(String title, String content){
+        if (title != null) {
+            validateTitle(title);
+            this.title = title;
+        }
+        if (content != null) {
+            validateContent(content);
+            this.content = content;
+        }
+        this.updatedAt = LocalDateTime.now();
+    }
+
     private static void validateTitle(String title) {
         if (title == null || title.isBlank()) {
             throw new BusinessException(ErrorCode.COMMON_INVALID_INPUT);

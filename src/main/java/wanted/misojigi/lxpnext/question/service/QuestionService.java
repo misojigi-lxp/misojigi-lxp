@@ -19,6 +19,7 @@ import wanted.misojigi.lxpnext.question.domain.QuestionStatus;
 import wanted.misojigi.lxpnext.question.dto.QuestionCreateRequest;
 import wanted.misojigi.lxpnext.question.dto.QuestionDetailResponse;
 import wanted.misojigi.lxpnext.question.dto.QuestionListResponse;
+import wanted.misojigi.lxpnext.question.dto.QuestionUpdateRequest;
 import wanted.misojigi.lxpnext.question.repository.QuestionRepository;
 
 @Service
@@ -127,5 +128,24 @@ public class QuestionService {
         Question question = Question.create(request.lectureId(), memberId, request.title(), request.content(), request.toVisibility());
 
         return questionRepository.save(question).getQuestionId();
+    }
+
+    @Transactional
+    public void updateQuestion(Long memberId, Long questionId, QuestionUpdateRequest request){
+        if (request.title() == null && request.content() == null) {
+            throw new BusinessException(ErrorCode.COMMON_INVALID_INPUT);
+        }
+
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.QUESTION_NOT_FOUND));
+
+        if (question.isDeleted()) {
+            throw new BusinessException(ErrorCode.QUESTION_DELETED);
+        }
+        if (!question.isWrittenBy(memberId)) {
+            throw new BusinessException(ErrorCode.QUESTION_ACCESS_DENIED);
+        }
+
+        question.update(request.title(), request.content());
     }
 }
