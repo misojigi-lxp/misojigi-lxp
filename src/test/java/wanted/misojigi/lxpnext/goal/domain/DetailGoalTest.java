@@ -56,6 +56,15 @@ class DetailGoalTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("50자");
         }
+
+        @Test
+        @DisplayName("sortOrder가 1 미만이면 예외가 발생한다")
+        void invalidSortOrder() {
+            // when & then
+            assertThatThrownBy(() -> DetailGoal.create(1L, "내용", 0))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("sortOrder");
+        }
     }
 
     @Nested

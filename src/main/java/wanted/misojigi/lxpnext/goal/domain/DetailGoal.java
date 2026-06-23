@@ -41,6 +41,7 @@ public class DetailGoal {
     public static DetailGoal create(Long learningGoalId, String content, int sortOrder) {
         validateLearningGoalId(learningGoalId);
         validateContent(content);
+        validateSortOrder(sortOrder);
         return new DetailGoal(learningGoalId, content, sortOrder);
     }
 
@@ -60,6 +61,12 @@ public class DetailGoal {
         }
         if (content.length() > 50) {
             throw new IllegalArgumentException("content는 50자 이하이어야 합니다.");
+        }
+    }
+
+    private static void validateSortOrder(int sortOrder) {
+        if (sortOrder < 1) {
+            throw new IllegalArgumentException("sortOrder는 1 이상이어야 합니다.");
         }
     }
 
