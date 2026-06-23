@@ -28,7 +28,7 @@ CREATE TABLE members (
                          password_hash VARCHAR(255) NOT NULL,
                          nickname     VARCHAR(100) NOT NULL,
                          status       VARCHAR(20)  NOT NULL,
-                         joined_at    DATETIME     NOT NULL,
+                         created_at   DATETIME     NOT NULL,
                          deleted_at   DATETIME     NULL,
 
                          PRIMARY KEY (member_id),
