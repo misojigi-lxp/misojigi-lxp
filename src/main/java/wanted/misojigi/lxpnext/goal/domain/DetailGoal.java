@@ -49,6 +49,14 @@ public class DetailGoal {
         this.completed = true;
     }
 
+    /** 내용과 노출 순서를 변경한다. 완료 상태(completed)는 유지한다. */
+    public void update(String content, int sortOrder) {
+        validateContent(content);
+        validateSortOrder(sortOrder);
+        this.content = content;
+        this.sortOrder = sortOrder;
+    }
+
     private static void validateLearningGoalId(Long learningGoalId) {
         if (learningGoalId == null) {
             throw new IllegalArgumentException("learningGoalId는 null일 수 없습니다.");

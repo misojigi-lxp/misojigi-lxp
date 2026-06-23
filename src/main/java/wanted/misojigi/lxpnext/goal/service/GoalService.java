@@ -1,8 +1,12 @@
 package wanted.misojigi.lxpnext.goal.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.springframework.stereotype.Service;
@@ -14,6 +18,7 @@ import wanted.misojigi.lxpnext.goal.domain.LearningGoal;
 import wanted.misojigi.lxpnext.goal.dto.GoalCreateRequest;
 import wanted.misojigi.lxpnext.goal.dto.GoalCreateResponse;
 import wanted.misojigi.lxpnext.goal.dto.GoalResponse;
+import wanted.misojigi.lxpnext.goal.dto.GoalUpdateRequest;
 import wanted.misojigi.lxpnext.goal.repository.DetailGoalRepository;
 import wanted.misojigi.lxpnext.goal.repository.LearningGoalRepository;
 import wanted.misojigi.lxpnext.member.domain.MemberStatus;
@@ -88,12 +93,71 @@ public class GoalService {
                 .toList();
     }
 
+    /**
+     * 학습목표를 수정한다. 제목을 갱신하고, 세부목표는 요청된 최종 상태로 맞춘다.
+     * <ul>
+     *   <li>detailGoalId가 있으면 기존 세부목표 수정 (completed 유지)</li>
+     *   <li>detailGoalId가 null이면 신규 추가</li>
+     *   <li>요청에 빠진 기존 세부목표는 삭제</li>
+     * </ul>
+     */
+    @Transactional
+    public GoalResponse updateGoal(Long memberId, Long goalId, GoalUpdateRequest request) {
+        validateMember(memberId);
+        validateDetailGoalCount(request.detailGoals());
+
+        LearningGoal goal = learningGoalRepository.findById(goalId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.GOAL_NOT_FOUND));
+        if (!goal.isOwnedBy(memberId)) {
+            throw new BusinessException(ErrorCode.GOAL_ACCESS_DENIED);
+        }
+
+        goal.updateTitle(request.title());
+
+        List<DetailGoal> result = applyDetailGoalChanges(goalId, request.detailGoals());
+        return GoalResponse.of(goal, result);
+    }
+
+    /** 세부목표를 요청된 최종 상태(추가/수정/삭제)로 동기화하고, 노출 순서대로 정렬된 결과를 반환한다. */
+    private List<DetailGoal> applyDetailGoalChanges(
+            Long goalId, List<GoalUpdateRequest.DetailGoalItem> items) {
+        Map<Long, DetailGoal> existingById =
+                detailGoalRepository.findByLearningGoalIdOrderBySortOrderAsc(goalId).stream()
+                        .collect(Collectors.toMap(DetailGoal::getDetailGoalId, Function.identity()));
+
+        List<DetailGoal> result = new ArrayList<>();
+        Set<Long> keptIds = new HashSet<>();
+        for (int i = 0; i < items.size(); i++) {
+            GoalUpdateRequest.DetailGoalItem item = items.get(i);
+            int sortOrder = i + 1;  // 배열 순서대로 노출 순서 재부여
+            if (item.detailGoalId() == null) {
+                result.add(DetailGoal.create(goalId, item.content(), sortOrder));  // 신규
+            } else {
+                DetailGoal existing = existingById.get(item.detailGoalId());
+                if (existing == null) {
+                    throw new BusinessException(ErrorCode.GOAL_DETAIL_NOT_FOUND);
+                }
+                existing.update(item.content(), sortOrder);  // 기존 수정 (completed 유지)
+                keptIds.add(existing.getDetailGoalId());
+                result.add(existing);
+            }
+        }
+
+        List<DetailGoal> toDelete = existingById.values().stream()
+                .filter(detailGoal -> !keptIds.contains(detailGoal.getDetailGoalId()))
+                .toList();
+        detailGoalRepository.deleteAll(toDelete);
+        detailGoalRepository.saveAll(result);  // 신규는 insert, 기존은 변경감지로 update
+
+        return result;
+    }
+
     private void validateMember(Long memberId) {
         memberRepository.findByMemberIdAndStatus(memberId, MemberStatus.ACTIVE)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
-    private void validateDetailGoalCount(List<GoalCreateRequest.DetailGoalItem> detailGoals) {
+    private void validateDetailGoalCount(List<?> detailGoals) {
         if (detailGoals == null || detailGoals.size() < MIN_DETAIL_GOALS) {
             throw new BusinessException(ErrorCode.GOAL_DETAIL_REQUIRED);
         }
