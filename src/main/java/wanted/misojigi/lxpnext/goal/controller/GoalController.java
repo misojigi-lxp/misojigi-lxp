@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import wanted.misojigi.lxpnext.common.auth.LoginMember;
+import wanted.misojigi.lxpnext.goal.dto.CompletionUpdateRequest;
 import wanted.misojigi.lxpnext.goal.dto.GoalCreateRequest;
 import wanted.misojigi.lxpnext.goal.dto.GoalCreateResponse;
 import wanted.misojigi.lxpnext.goal.dto.GoalResponse;
@@ -58,5 +59,16 @@ public class GoalController {
     ) {
         goalService.deleteGoal(memberId, goalId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{goalId}/details/{detailGoalId}/completion")
+    public ResponseEntity<GoalResponse> updateDetailGoalCompletion(
+            @LoginMember Long memberId,
+            @PathVariable Long goalId,
+            @PathVariable Long detailGoalId,
+            @RequestBody CompletionUpdateRequest request
+    ) {
+        return ResponseEntity.ok(
+                goalService.updateDetailGoalCompletion(memberId, goalId, detailGoalId, request.completed()));
     }
 }

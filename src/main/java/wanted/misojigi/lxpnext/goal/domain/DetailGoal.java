@@ -58,6 +58,11 @@ public class DetailGoal {
         this.completed = true;
     }
 
+    /** 달성 여부를 토글(체크/해제)한다. */
+    public void changeCompletion(boolean completed) {
+        this.completed = completed;
+    }
+
     /** 내용과 노출 순서를 변경한다. 완료 상태(completed)는 유지한다. */
     public void update(String content, int sortOrder) {
         validateContent(content);

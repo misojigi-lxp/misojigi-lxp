@@ -119,6 +119,32 @@ public class GoalService {
     }
 
     /**
+     * 세부목표의 달성 여부를 변경한다(체크/해제). 작성자 본인만 변경할 수 있다.
+     * 응답의 completed 필드로 "목표 전체 달성 여부"(세부목표 전부 완료)를 함께 내려준다.
+     */
+    @Transactional
+    public GoalResponse updateDetailGoalCompletion(
+            Long memberId, Long goalId, Long detailGoalId, boolean completed) {
+        validateMember(memberId);
+
+        LearningGoal goal = learningGoalRepository.findById(goalId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.GOAL_NOT_FOUND));
+        if (!goal.isOwnedBy(memberId)) {
+            throw new BusinessException(ErrorCode.GOAL_ACCESS_DENIED);
+        }
+
+        List<DetailGoal> details = detailGoalRepository.findByLearningGoalIdOrderBySortOrderAsc(goalId);
+        DetailGoal target = details.stream()
+                .filter(detailGoal -> detailGoal.getDetailGoalId().equals(detailGoalId))
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(ErrorCode.GOAL_DETAIL_NOT_FOUND));
+
+        target.changeCompletion(completed);  // 변경감지로 저장됨
+
+        return GoalResponse.of(goal, details);
+    }
+
+    /**
      * 학습목표를 삭제한다(soft delete). 하위 세부목표도 함께 삭제된다.
      * 작성자 본인만 삭제할 수 있으며, 달성 여부와 무관하게 언제든 삭제 가능하다.
      */
