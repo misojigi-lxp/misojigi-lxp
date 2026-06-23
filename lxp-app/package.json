@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "dev:all": "concurrently -n BACK,FRONT -c blue,green \"cd .. && ./gradlew bootRun\" \"next dev\"",
+    "dev:all": "concurrently -n BACK,FRONT -c blue,green \"node scripts/run-backend.mjs\" \"next dev\"",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
