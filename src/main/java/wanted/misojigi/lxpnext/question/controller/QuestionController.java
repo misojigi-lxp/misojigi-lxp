@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -69,5 +70,11 @@ public class QuestionController {
             QuestionUpdateRequest request) {
         questionService.updateQuestion(memberId, questionId, request);
         return ResponseEntity.ok(questionId);
+    }
+
+    @DeleteMapping("/{questionId}")
+    public ResponseEntity<Void> deleteQuestion(@LoginMember Long memberId, @PathVariable Long questionId){
+        questionService.deleteQuestion(memberId, questionId);
+        return ResponseEntity.ok().build();
     }
 }

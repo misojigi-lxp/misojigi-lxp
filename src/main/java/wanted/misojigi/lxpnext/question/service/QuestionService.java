@@ -148,4 +148,24 @@ public class QuestionService {
 
         question.update(request.title(), request.content());
     }
+
+    @Transactional
+    public void deleteQuestion(Long memberId, Long questionId){
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.QUESTION_NOT_FOUND));
+
+        if (question.isDeleted()) {
+            throw new BusinessException(ErrorCode.QUESTION_DELETED);
+        }
+
+        Lecture lecture = lectureRepository.findById(question.getLectureId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.LECTURE_NOT_FOUND));
+
+        boolean canDelete = question.isWrittenBy(memberId) || isInstructorOf(lecture, memberId);
+        if (!canDelete) {
+            throw new BusinessException(ErrorCode.QUESTION_ACCESS_DENIED);
+        }
+
+        question.delete();
+    }
 }

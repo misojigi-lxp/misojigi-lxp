@@ -81,6 +81,11 @@ public class Question extends BaseEntity {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public void delete() {
+        this.status = QuestionStatus.DELETED;
+        this.deletedAt = LocalDateTime.now();
+    }
+
     private static void validateTitle(String title) {
         if (title == null || title.isBlank()) {
             throw new BusinessException(ErrorCode.COMMON_INVALID_INPUT);
