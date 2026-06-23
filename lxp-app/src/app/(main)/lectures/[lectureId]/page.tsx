@@ -2,8 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLecture } from "@/lib/api/lecture";
 import type { LectureDetailResponse } from "@/types/lecture";
-import LectureContentItem from "@/components/lectures/LectureContentItem";
-import LectureTabMenu from "@/components/lectures/LectureTabMenu";
+import LectureDetailTabs from "@/components/lectures/LectureDetailTabs";
 
 type LectureDetailPageProps = {
   params: Promise<{
@@ -69,33 +68,7 @@ export default async function LectureDetailPage({
             </p>
           </section>
 
-          <LectureTabMenu />
-
-          <section className="mt-8 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
-            <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900">콘텐츠 목록</h2>
-              <span className="text-sm text-gray-400">
-                총 {lecture.contents.length}개
-              </span>
-            </div>
-
-            {lecture.contents.length > 0 ? (
-              <div className="flex flex-col gap-3">
-                {lecture.contents.map((content) => (
-                  <LectureContentItem
-                    key={content.contentId}
-                    content={content}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center rounded-xl bg-gray-50 py-12">
-                <p className="text-sm text-gray-400">
-                  등록된 콘텐츠가 없습니다.
-                </p>
-              </div>
-            )}
-          </section>
+          <LectureDetailTabs lecture={lecture} />
         </div>
       ) : null}
     </div>
