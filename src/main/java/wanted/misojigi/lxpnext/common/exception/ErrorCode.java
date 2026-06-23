@@ -27,6 +27,7 @@ public enum ErrorCode {
     GOAL_ACCESS_DENIED(HttpStatus.FORBIDDEN, "본인의 목표만 처리할 수 있습니다."),
     GOAL_DETAIL_REQUIRED(HttpStatus.BAD_REQUEST, "세부목표는 최소 1개 이상이어야 합니다."),
     GOAL_DETAIL_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "세부목표는 최대 20개까지 등록할 수 있습니다."),
+    GOAL_DETAIL_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 목표에 존재하지 않는 세부목표입니다."),
 
     // Question
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 질문입니다."),

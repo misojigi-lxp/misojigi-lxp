@@ -6,9 +6,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "detail_goals")
+@SQLDelete(sql = "UPDATE detail_goals SET deleted_at = NOW() WHERE detail_goal_id = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class DetailGoal {
 
     @Id
@@ -27,6 +32,10 @@ public class DetailGoal {
 
     @Column(name = "sort_order", nullable = false)
     private int sortOrder;
+
+    /** 삭제일(soft delete). 살아있는 세부목표는 null. */
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     protected DetailGoal() {
     }
@@ -47,6 +56,19 @@ public class DetailGoal {
 
     public void complete() {
         this.completed = true;
+    }
+
+    /** 달성 여부를 토글(체크/해제)한다. */
+    public void changeCompletion(boolean completed) {
+        this.completed = completed;
+    }
+
+    /** 내용과 노출 순서를 변경한다. 완료 상태(completed)는 유지한다. */
+    public void update(String content, int sortOrder) {
+        validateContent(content);
+        validateSortOrder(sortOrder);
+        this.content = content;
+        this.sortOrder = sortOrder;
     }
 
     private static void validateLearningGoalId(Long learningGoalId) {
@@ -88,5 +110,9 @@ public class DetailGoal {
 
     public int getSortOrder() {
         return sortOrder;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
     }
 }
