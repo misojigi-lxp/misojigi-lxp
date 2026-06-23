@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.stream.IntStream;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import wanted.misojigi.lxpnext.common.exception.BusinessException;
+import wanted.misojigi.lxpnext.common.exception.ErrorCode;
 import wanted.misojigi.lxpnext.goal.domain.DetailGoal;
 import wanted.misojigi.lxpnext.goal.domain.LearningGoal;
 import wanted.misojigi.lxpnext.goal.dto.GoalCreateRequest;
@@ -56,15 +58,15 @@ public class GoalService {
 
     private void validateMember(Long memberId) {
         memberRepository.findByMemberIdAndStatus(memberId, MemberStatus.ACTIVE)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 탈퇴한 회원입니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
     private void validateDetailGoalCount(List<GoalCreateRequest.DetailGoalItem> detailGoals) {
         if (detailGoals == null || detailGoals.size() < MIN_DETAIL_GOALS) {
-            throw new IllegalArgumentException("세부목표는 최소 1개 이상이어야 합니다.");
+            throw new BusinessException(ErrorCode.GOAL_DETAIL_REQUIRED);
         }
         if (detailGoals.size() > MAX_DETAIL_GOALS) {
-            throw new IllegalArgumentException("세부목표는 최대 20개까지 등록할 수 있습니다.");
+            throw new BusinessException(ErrorCode.GOAL_DETAIL_LIMIT_EXCEEDED);
         }
     }
 }

@@ -20,6 +20,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import wanted.misojigi.lxpnext.common.exception.BusinessException;
+import wanted.misojigi.lxpnext.common.exception.ErrorCode;
 import wanted.misojigi.lxpnext.goal.domain.DetailGoal;
 import wanted.misojigi.lxpnext.goal.domain.LearningGoal;
 import wanted.misojigi.lxpnext.goal.dto.GoalCreateRequest;
@@ -90,8 +92,9 @@ class GoalServiceTest {
 
             // when & then
             assertThatThrownBy(() -> goalService.createGoal(MEMBER_ID, request))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("회원");
+                    .isInstanceOf(BusinessException.class)
+                    .extracting(e -> ((BusinessException) e).getErrorCode())
+                    .isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
             then(learningGoalRepository).should(never()).save(any());
             then(detailGoalRepository).should(never()).saveAll(any());
         }
@@ -106,8 +109,9 @@ class GoalServiceTest {
 
             // when & then
             assertThatThrownBy(() -> goalService.createGoal(MEMBER_ID, request))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("최소 1개");
+                    .isInstanceOf(BusinessException.class)
+                    .extracting(e -> ((BusinessException) e).getErrorCode())
+                    .isEqualTo(ErrorCode.GOAL_DETAIL_REQUIRED);
             then(learningGoalRepository).should(never()).save(any());
         }
 
@@ -124,8 +128,9 @@ class GoalServiceTest {
 
             // when & then
             assertThatThrownBy(() -> goalService.createGoal(MEMBER_ID, request))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("최대 20개");
+                    .isInstanceOf(BusinessException.class)
+                    .extracting(e -> ((BusinessException) e).getErrorCode())
+                    .isEqualTo(ErrorCode.GOAL_DETAIL_LIMIT_EXCEEDED);
             then(learningGoalRepository).should(never()).save(any());
         }
     }
