@@ -7,6 +7,7 @@ type InputProps = {
   placeholder?: string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  error?: string;
   className?: string;
 };
 
@@ -17,6 +18,7 @@ export default function Input({
   placeholder,
   value,
   onChange,
+  error,
   className = "",
 }: InputProps) {
   return (
@@ -32,8 +34,9 @@ export default function Input({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className={`w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition ${className}`}
+        className={`w-full rounded-lg border px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition ${error ? "border-red-400" : "border-gray-300"} ${className}`}
       />
+      {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
   );
 }
