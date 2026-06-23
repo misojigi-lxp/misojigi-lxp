@@ -11,7 +11,7 @@ export class SignupApiError extends Error {
   }
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASIC_URL ?? "http://localhost:8080";
 
 export async function loginApi(body: LoginRequest): Promise<MemberResponse> {
   const res = await fetch(`${BASE_URL}/auth/login`, {
@@ -41,6 +41,21 @@ export async function signupApi(body: SignupRequest): Promise<MemberResponse> {
     throw new SignupApiError(data.message, res.status, data.fieldErrors);
   }
 
+  return res.json() as Promise<MemberResponse>;
+}
+
+/**
+ * 현재 로그인한 회원 조회 (세션 복원용).
+ * 비로그인(401) 등 실패 시 null 을 반환해 "로그아웃 상태"로 취급한다.
+ */
+export async function getMeApi(): Promise<MemberResponse | null> {
+  const res = await fetch(`${BASE_URL}/auth/me`, {
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    return null;
+  }
   return res.json() as Promise<MemberResponse>;
 }
 

@@ -6,10 +6,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import wanted.misojigi.lxpnext.common.auth.LoginMember;
 import wanted.misojigi.lxpnext.common.auth.SessionConst;
 import wanted.misojigi.lxpnext.member.domain.Member;
 import wanted.misojigi.lxpnext.member.dto.LoginRequest;
@@ -22,6 +24,7 @@ import wanted.misojigi.lxpnext.member.service.MemberService;
  * <ul>
  *   <li>POST /auth/login  로그인</li>
  *   <li>POST /auth/logout 로그아웃</li>
+ *   <li>GET  /auth/me     현재 로그인한 회원 조회 (세션 복원용)</li>
  * </ul>
  */
 @RestController
@@ -46,6 +49,15 @@ public class AuthController {
         HttpSession session = httpRequest.getSession(true);
         session.setAttribute(SessionConst.LOGIN_MEMBER_ID, member.getMemberId());
         return ResponseEntity.ok(MemberResponse.from(member));
+    }
+
+    /**
+     * 현재 로그인한 회원 정보 조회. 새로고침 시 클라이언트가 세션 상태를 복원하는 데 사용한다.
+     * 비로그인이면 {@code @LoginMember} 리졸버가 401(MEMBER_LOGIN_REQUIRED)을 던진다.
+     */
+    @GetMapping("/me")
+    public ResponseEntity<MemberResponse> me(@LoginMember Long memberId) {
+        return ResponseEntity.ok(MemberResponse.from(memberService.findActiveMember(memberId)));
     }
 
     /**
