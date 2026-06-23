@@ -9,6 +9,7 @@ public enum ErrorCode {
     COMMON_INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다."),
 
     // Member
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
     MEMBER_DUPLICATE_LOGIN_ID(HttpStatus.CONFLICT, "사용 불가능한 아이디입니다."),
     MEMBER_INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 올바르지 않습니다."),
     MEMBER_LOGIN_REQUIRED(HttpStatus.UNAUTHORIZED, "로그인이 필요한 기능입니다."),
@@ -24,6 +25,8 @@ public enum ErrorCode {
     // Goal
     GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 목표입니다."),
     GOAL_ACCESS_DENIED(HttpStatus.FORBIDDEN, "본인의 목표만 처리할 수 있습니다."),
+    GOAL_DETAIL_REQUIRED(HttpStatus.BAD_REQUEST, "세부목표는 최소 1개 이상이어야 합니다."),
+    GOAL_DETAIL_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "세부목표는 최대 20개까지 등록할 수 있습니다."),
 
     // Question
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 질문입니다."),
