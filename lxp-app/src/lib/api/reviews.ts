@@ -6,8 +6,10 @@ import type {
   ReviewResponse,
 } from "@/types/review";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "";
+const API_BASE_URL = (
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080"
+).replace(/\/$/, "");
+
 
 const REQUEST_TIMEOUT_MS = 8000;
 
