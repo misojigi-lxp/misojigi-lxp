@@ -7,7 +7,8 @@ import type {
 } from "@/types/review";
 
 const API_BASE_URL = (
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080"
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  (process.env.NODE_ENV === "development" ? "http://localhost:8080" : "")
 ).replace(/\/$/, "");
 
 
