@@ -17,7 +17,6 @@ export default function QuestionFormModal({
   onCreated,
 }: QuestionFormModalProps) {
   const router = useRouter();
-  const [isPublic, setIsPublic] = useState(true);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -43,7 +42,7 @@ export default function QuestionFormModal({
         lectureId,
         title: title.trim(),
         content: content.trim(),
-        isPublic,
+        isPublic: true, // MVP: 공개 고정 (비공개 선택은 추후 추가)
       });
       onCreated();
     } catch (e) {
@@ -70,43 +69,6 @@ export default function QuestionFormModal({
         {/* Body */}
         <div className="min-h-0 flex-1 overflow-y-auto px-6">
           <div className="flex flex-col gap-5 pb-4">
-            {/* 공개 설정 */}
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                공개 설정
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsPublic(true)}
-                  className={`rounded-lg border px-4 py-3 text-left transition-colors ${
-                    isPublic
-                      ? "border-violet-400 bg-violet-50"
-                      : "border-gray-200 hover:bg-gray-50"
-                  }`}
-                >
-                  <p className="text-sm font-medium text-gray-800">🌐 공개</p>
-                  <p className="mt-0.5 text-xs text-gray-400">
-                    모든 수강생이 볼 수 있어요
-                  </p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsPublic(false)}
-                  className={`rounded-lg border px-4 py-3 text-left transition-colors ${
-                    !isPublic
-                      ? "border-violet-400 bg-violet-50"
-                      : "border-gray-200 hover:bg-gray-50"
-                  }`}
-                >
-                  <p className="text-sm font-medium text-gray-800">🔒 비공개</p>
-                  <p className="mt-0.5 text-xs text-gray-400">
-                    나와 강사만 볼 수 있어요
-                  </p>
-                </button>
-              </div>
-            </div>
-
             {/* 제목 */}
             <div>
               <label className="mb-1.5 block text-sm font-medium text-gray-700">

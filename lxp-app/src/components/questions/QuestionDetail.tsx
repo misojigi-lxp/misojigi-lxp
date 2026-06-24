@@ -8,6 +8,7 @@ import {
   updateQuestion,
   deleteQuestion,
 } from "@/lib/api/questions";
+import { useAuthContext } from "@/store/authStore";
 import type { QuestionDetailResponse } from "@/types/question";
 
 type QuestionDetailProps = {
@@ -22,6 +23,7 @@ export default function QuestionDetail({
   onDeleted,
 }: QuestionDetailProps) {
   const router = useRouter();
+  const { member } = useAuthContext();
   const [question, setQuestion] = useState<QuestionDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -31,6 +33,10 @@ export default function QuestionDetail({
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  // 본인 작성 질문 여부 (수정/삭제 버튼 노출 기준)
+  const isMine =
+    member != null && question != null && member.memberId === question.writerId;
 
   // 학습목표와 동일한 에러 처리: 401이면 로그인 페이지, 그 외는 백엔드 메시지 alert
   const handleError = (e: unknown) => {
@@ -132,6 +138,8 @@ export default function QuestionDetail({
           {editing ? (
             /* ── 편집 뷰 ── */
             <div className="flex flex-col gap-4">
+              <h2 className="text-lg font-bold text-gray-900">질문 수정</h2>
+
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-gray-700">
                   제목
@@ -176,19 +184,9 @@ export default function QuestionDetail({
           ) : (
             /* ── 보기 뷰 ── */
             <>
-              {/* Badge + Actions */}
-              <div className="mb-3 flex items-center justify-between">
-                {question.visibility === "PUBLIC" ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-medium text-green-600">
-                    🔓 공개
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500">
-                    🔒 비공개
-                  </span>
-                )}
-
-                <div className="flex items-center gap-2">
+              {/* Actions (본인만) */}
+              {isMine && (
+                <div className="mb-3 flex items-center justify-end gap-2">
                   <button
                     type="button"
                     onClick={openEdit}
@@ -204,7 +202,7 @@ export default function QuestionDetail({
                     삭제
                   </button>
                 </div>
-              </div>
+              )}
 
               {/* Title */}
               <h2 className="mb-2 text-lg font-bold text-gray-900">

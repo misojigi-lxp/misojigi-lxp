@@ -10,6 +10,7 @@ export interface QuestionListResponse {
 
 export interface QuestionDetailResponse {
   questionId: number;
+  writerId: number;
   title: string;
   content: string;
   writerNickname: string;
