@@ -6,6 +6,7 @@ import wanted.misojigi.lxpnext.question.domain.QuestionVisibility;
 
 public record QuestionDetailResponse(
         Long questionId,
+        Long writerId,
         String title,
         String content,
         String writerNickname,
@@ -15,6 +16,7 @@ public record QuestionDetailResponse(
     public static QuestionDetailResponse from(Question question, String writerNickname) {
         return new QuestionDetailResponse(
                 question.getQuestionId(),
+                question.getWriterId(),
                 question.getTitle(),
                 question.getContent(),
                 writerNickname,
