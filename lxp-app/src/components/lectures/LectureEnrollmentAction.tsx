@@ -125,6 +125,7 @@ export default function LectureEnrollmentAction({
       });
     } catch (error) {
       if (isApiError(error) && error.status === 401) {
+        setIsModalOpen(false);
         router.push("/login");
         return;
       }

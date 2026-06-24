@@ -64,7 +64,11 @@ public class EnrollmentService {
         try {
             return enrollmentRepository.save(Enrollment.create(memberId, lectureId));
         } catch (DataIntegrityViolationException e) {
-            throw new BusinessException(ErrorCode.ENROLLMENT_ALREADY_EXISTS);
+            if (isDuplicateEnrollmentException(e)) {
+                throw new BusinessException(ErrorCode.ENROLLMENT_ALREADY_EXISTS);
+            }
+
+            throw e;
         }
     }
 
@@ -102,5 +106,19 @@ public class EnrollmentService {
     private void validateActiveMember(Long memberId) {
         memberRepository.findByMemberIdAndStatus(memberId, MemberStatus.ACTIVE)
             .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    private boolean isDuplicateEnrollmentException(DataIntegrityViolationException e) {
+        String message = e.getMostSpecificCause().getMessage();
+
+        if (message == null) {
+            return false;
+        }
+
+        String lowerMessage = message.toLowerCase();
+
+        return lowerMessage.contains("enrollment")
+            && lowerMessage.contains("member")
+            && lowerMessage.contains("lecture");
     }
 }
