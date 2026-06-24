@@ -7,6 +7,7 @@ import LectureReviewSection from "@/components/lectures/LectureReviewSection";
 import LectureTabMenu, {
   type LectureTabType,
 } from "@/components/lectures/LectureTabMenu";
+import QnaTab from "@/components/questions/QnaTab";
 
 type LectureDetailTabsProps = {
   lecture: LectureDetailResponse;
@@ -46,13 +47,7 @@ export default function LectureDetailTabs({ lecture }: LectureDetailTabsProps) {
 
       {activeTab === "questions" && (
         <section className="mt-8 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
-          <h2 className="text-xl font-bold text-gray-900">Q&amp;A</h2>
-
-          <div className="mt-6 flex flex-col items-center justify-center rounded-xl bg-gray-50 py-12">
-            <p className="text-sm text-gray-400">
-              Q&amp;A 기능은 준비 중입니다.
-            </p>
-          </div>
+          <QnaTab lectureId={lecture.lectureId} />
         </section>
       )}
 
