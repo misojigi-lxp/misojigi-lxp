@@ -122,12 +122,11 @@ export default function LectureReviewSection({
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-violet-50 text-sm font-bold text-violet-600">
-                      {String(review.writerId).slice(0, 1)}
                     </div>
 
                     <div>
                       <p className="text-sm font-bold text-gray-900">
-                        작성자 ID {review.writerId}
+                        작성자 ID : {review.writerId}
                       </p>
 
                       {renderStars(review.rating)}
