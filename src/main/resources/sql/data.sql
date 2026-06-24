@@ -14,7 +14,7 @@ INSERT INTO members (member_id, login_id, password_hash, nickname, status, creat
                                                                                                       (2, 'instructor_lee',  '$2a$10$abcdefghijklmnopqrstuv1234567890ABCDEFGHIJKLMNOPq', '이강사',   'ACTIVE',  '2026-01-03 09:00:00', NULL),
                                                                                                       (3, 'instructor_park', '$2a$10$abcdefghijklmnopqrstuv1234567890ABCDEFGHIJKLMNOPq', '박강사',   'ACTIVE',  '2026-01-04 09:00:00', NULL),
                                                                                                       (4, 'student_choi',    '$2a$10$abcdefghijklmnopqrstuv1234567890ABCDEFGHIJKLMNOPq', '최탈퇴',   'DELETED', '2026-01-05 09:00:00', '2026-05-01 12:00:00'),
-                                                                                                      (5, 'student_jung',    '$2a$10$abcdefghijklmnopqrstuv1234567890ABCDEFGHIJKLMNOPq', '정수강',   'ACTIVE',  '2026-02-10 09:00:00', NULL),
+                                                                                                      (5, 'test',    '$2a$10$1nBMyvTQfCPRBBmpPu2S7.0E.9CqDQyHXFkqi6TRHsmO6Q6cu2iWC', '정수강',   'ACTIVE',  '2026-02-10 09:00:00', NULL),
                                                                                                       (6, 'student_yoon',    '$2a$10$abcdefghijklmnopqrstuv1234567890ABCDEFGHIJKLMNOPq', '윤학생',   'ACTIVE',  '2026-02-11 09:00:00', NULL),
                                                                                                       (7, 'student_han',     '$2a$10$abcdefghijklmnopqrstuv1234567890ABCDEFGHIJKLMNOPq', '한열정',   'ACTIVE',  '2026-02-12 09:00:00', NULL);
 
