@@ -2,6 +2,7 @@ package wanted.misojigi.lxpnext.enrollment.controller;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +15,7 @@ import wanted.misojigi.lxpnext.enrollment.dto.EnrollmentResponse;
 import wanted.misojigi.lxpnext.enrollment.service.EnrollmentService;
 
 @RestController
-@RequestMapping("/api/enrollments")
+@RequestMapping("/enrollments")
 public class EnrollmentController {
 
     private final EnrollmentService enrollmentService;
@@ -25,18 +26,23 @@ public class EnrollmentController {
 
     /**
      * 수강 신청.
-     * 이미 수강 중인 경우 409를 반환하고, 프론트엔드가 강의 페이지로 리다이렉트한다.
      */
     @PostMapping
-    public ResponseEntity<Void> enroll(@LoginMember Long memberId,
-                                       @Valid @RequestBody EnrollRequest request) {
+    public ResponseEntity<Void> enroll(
+        @LoginMember Long memberId,
+        @Valid @RequestBody EnrollRequest request
+    ) {
         enrollmentService.enroll(memberId, request.lectureId());
-        return ResponseEntity.status(201).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    /** 본인 수강 목록 조회 */
-    @GetMapping("/me")
-    public ResponseEntity<List<EnrollmentResponse>> getMyEnrollments(@LoginMember Long memberId) {
+    /**
+     * 본인 수강 전체 조회.
+     */
+    @GetMapping
+    public ResponseEntity<List<EnrollmentResponse>> getMyEnrollments(
+        @LoginMember Long memberId
+    ) {
         return ResponseEntity.ok(enrollmentService.getMyEnrollments(memberId));
     }
 }

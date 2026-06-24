@@ -19,8 +19,9 @@ public enum ErrorCode {
     LECTURE_NOT_ACCESSIBLE(HttpStatus.NOT_FOUND, "조회할 수 없는 강의입니다."),
 
     // Enrollment
-    ENROLLMENT_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 신청한 강의입니다."),
+    ENROLLMENT_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 수강 중인 강의입니다."),
     ENROLLMENT_LIST_ACCESS_DENIED(HttpStatus.FORBIDDEN, "본인의 수강 목록만 조회할 수 있습니다."),
+    ENROLLMENT_LECTURE_NOT_ACCESSIBLE(HttpStatus.NOT_FOUND, "해당 강의가 비공개 처리되었습니다."),
 
     // Goal
     GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 목표입니다."),
