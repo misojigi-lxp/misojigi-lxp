@@ -6,8 +6,6 @@ type QuestionItemProps = {
 };
 
 export default function QuestionItem({ question, onClick }: QuestionItemProps) {
-  const isPublic = question.visibility === "PUBLIC";
-
   return (
     <div
       role={onClick ? "button" : undefined}
@@ -20,19 +18,6 @@ export default function QuestionItem({ question, onClick }: QuestionItemProps) {
           : "cursor-default"
       }`}
     >
-      {/* Badge */}
-      <div className="mb-2 flex flex-wrap items-center gap-2">
-        {isPublic ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-medium text-green-600">
-            🔓 공개
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500">
-            🔒 비공개
-          </span>
-        )}
-      </div>
-
       {/* Title */}
       <h4 className="text-[15px] font-semibold leading-snug text-gray-900">
         {question.title}

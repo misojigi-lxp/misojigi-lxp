@@ -184,37 +184,25 @@ export default function QuestionDetail({
           ) : (
             /* ── 보기 뷰 ── */
             <>
-              {/* Badge + Actions */}
-              <div className="mb-3 flex items-center justify-between">
-                {question.visibility === "PUBLIC" ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-medium text-green-600">
-                    🔓 공개
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500">
-                    🔒 비공개
-                  </span>
-                )}
-
-                {isMine && (
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={openEdit}
-                      className="rounded-md border border-gray-200 px-3 py-1 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50"
-                    >
-                      수정
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleDelete}
-                      className="rounded-md border border-red-200 px-3 py-1 text-xs font-medium text-red-500 transition-colors hover:bg-red-50"
-                    >
-                      삭제
-                    </button>
-                  </div>
-                )}
-              </div>
+              {/* Actions (본인만) */}
+              {isMine && (
+                <div className="mb-3 flex items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={openEdit}
+                    className="rounded-md border border-gray-200 px-3 py-1 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50"
+                  >
+                    수정
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    className="rounded-md border border-red-200 px-3 py-1 text-xs font-medium text-red-500 transition-colors hover:bg-red-50"
+                  >
+                    삭제
+                  </button>
+                </div>
+              )}
 
               {/* Title */}
               <h2 className="mb-2 text-lg font-bold text-gray-900">
