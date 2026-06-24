@@ -126,7 +126,7 @@ export default function LectureReviewSection({
 
                     <div>
                       <p className="text-sm font-bold text-gray-900">
-                        작성자 ID {review.writerId}
+                        작성자 ID : {review.writerId}
                       </p>
 
                       {renderStars(review.rating)}
