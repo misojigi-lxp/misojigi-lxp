@@ -13,6 +13,8 @@ import wanted.misojigi.lxpnext.common.exception.ErrorCode;
 import wanted.misojigi.lxpnext.lecture.domain.Lecture;
 import wanted.misojigi.lxpnext.lecture.domain.LectureStatus;
 import wanted.misojigi.lxpnext.lecture.dto.ContentResponse;
+import wanted.misojigi.lxpnext.lecture.dto.LectureCreateRequest;
+import wanted.misojigi.lxpnext.lecture.dto.LectureCreateResponse;
 import wanted.misojigi.lxpnext.lecture.dto.LectureDetailResponse;
 import wanted.misojigi.lxpnext.lecture.dto.LectureListResponse;
 import wanted.misojigi.lxpnext.lecture.repository.ContentRepository;
@@ -91,6 +93,17 @@ public class LectureService {
 			instructorNickname,
 			contents
 		);
+	}
+
+	@Transactional
+	public LectureCreateResponse createLecture(LectureCreateRequest request) {
+		Lecture lecture = Lecture.create(
+			request.instructorId(),
+			request.title(),
+			request.description()
+		);
+
+		return LectureCreateResponse.of(lectureRepository.save(lecture));
 	}
 
 	private String getInstructorNickname(Member instructor) {

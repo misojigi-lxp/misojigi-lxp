@@ -35,6 +35,17 @@ public class Lecture extends BaseEntity {
 	protected Lecture() {
 	}
 
+	private Lecture(Long instructorId, String title, String description) {
+		this.instructorId = instructorId;
+		this.title = title;
+		this.description = description;
+		this.status = LectureStatus.PUBLIC;
+	}
+
+	public static Lecture create(Long instructorId, String title, String description) {
+		return new Lecture(instructorId, title, description);
+	}
+
 	public Long getId() {
 		return id;
 	}

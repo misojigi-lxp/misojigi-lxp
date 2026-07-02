@@ -1,10 +1,16 @@
 package wanted.misojigi.lxpnext.lecture.controller;
 
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import wanted.misojigi.lxpnext.lecture.dto.LectureCreateRequest;
+import wanted.misojigi.lxpnext.lecture.dto.LectureCreateResponse;
 import wanted.misojigi.lxpnext.lecture.dto.LectureDetailResponse;
 import wanted.misojigi.lxpnext.lecture.dto.LectureListResponse;
 import wanted.misojigi.lxpnext.lecture.service.LectureService;
@@ -19,6 +25,14 @@ public class LectureController {
 
 	public LectureController(LectureService lectureService) {
 		this.lectureService = lectureService;
+	}
+
+	@PostMapping
+	public ResponseEntity<LectureCreateResponse> createLecture(
+		@Valid @RequestBody LectureCreateRequest request
+	) {
+		return ResponseEntity.status(HttpStatus.CREATED)
+			.body(lectureService.createLecture(request));
 	}
 
 	@GetMapping
