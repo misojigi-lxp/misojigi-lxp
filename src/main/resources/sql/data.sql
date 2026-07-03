@@ -35,14 +35,25 @@ INSERT INTO lectures (lecture_id, instructor_id, title, description, status, cre
 -- Content (콘텐츠)
 --   PUBLIC 강의(1~3)에 콘텐츠, DELETED 강의(5)에도 1개 두어 노출 제외 검증
 -- ------------------------------------------------------------
+-- ------------------------------------------------------------
+-- Content (콘텐츠)
+--   PUBLIC 강의(1~3)에 콘텐츠, DELETED 강의(5)에도 1개 두어 노출 제외 검증
+--   RAG 테스트용으로 lecture_id = 3 에 Spring/JPA 관련 콘텐츠 추가
+-- ------------------------------------------------------------
 INSERT INTO contents (content_id, lecture_id, title, content_url, sort_order, created_at) VALUES
                                                                                               (1, 1, '1강. React 시작하기',            'https://cdn.lxp.test/react/01.mp4', 1, '2026-02-01 11:00:00'),
                                                                                               (2, 1, '2강. useState 다루기',           'https://cdn.lxp.test/react/02.mp4', 2, '2026-02-01 11:10:00'),
                                                                                               (3, 1, '3강. useEffect 와 생명주기',     'https://cdn.lxp.test/react/03.mp4', 3, '2026-02-01 11:20:00'),
+
                                                                                               (4, 2, '1강. 시간복잡도 이해',           'https://cdn.lxp.test/algo/01.mp4',  1, '2026-02-05 11:00:00'),
                                                                                               (5, 2, '2강. DP 기초',                   'https://cdn.lxp.test/algo/02.mp4',  2, '2026-02-05 11:10:00'),
-                                                                                              (6, 3, '1강. REST 와 HTTP',              'https://cdn.lxp.test/spring/01.mp4',1, '2026-02-08 11:00:00'),
-                                                                                              (7, 5, '폐강 강의 콘텐츠 (노출 제외)',   'https://cdn.lxp.test/legacy/01.mp4',1, '2026-01-15 11:00:00');
+
+                                                                                              (6, 3, '1강. REST 와 HTTP',              'https://cdn.lxp.test/spring/01.mp4', 1, '2026-02-08 11:00:00'),
+                                                                                              (7, 3, '2강. JPA 기본 개념',             'https://cdn.lxp.test/spring/02.mp4', 2, '2026-02-08 11:10:00'),
+                                                                                              (8, 3, '3강. 영속성 컨텍스트',           'https://cdn.lxp.test/spring/03.mp4', 3, '2026-02-08 11:20:00'),
+                                                                                              (9, 3, '4강. Spring Security 기초',      'https://cdn.lxp.test/spring/04.mp4', 4, '2026-02-08 11:30:00'),
+
+                                                                                              (10, 5, '폐강 강의 콘텐츠 (노출 제외)',  'https://cdn.lxp.test/legacy/01.mp4', 1, '2026-01-15 11:00:00');
 
 -- ------------------------------------------------------------
 -- Enrollment (수강)
